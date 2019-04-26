@@ -1,0 +1,13 @@
+*.o
+/ft_ssl_md5
+*.dSYM
+a.out
+*.a
+/lib
+/objs
+/.idea
+*.pyc
+._*
+.DS_Store
+in.my
+in.ref
