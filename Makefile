@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 PROJECT	= ft_ssl_md5
-NAME	= ft_ssl_md5
+NAME	= ft_ssl
 
 CC 	=	/usr/bin/clang
 RM 	=	/bin/rm
@@ -39,7 +39,9 @@ CPATH 	=	$(ROOT)/srcs
 LPATH	=	$(LIBFT)/libft.a
 HPATH 	=	-I $(ROOT)/includes -I $(LIBFT)/includes
 
-SRC =	main.c
+SRC =	main.c \
+		parsing.c \
+		shell.c
 
 PRE_CHECK_SUB_LIBFT	:= $(LIBFT)/Makefile
 PRE_CHECK_SUB		:= $(PRE_CHECK_SUB_LIBFT)

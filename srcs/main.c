@@ -1,11 +1,18 @@
 #include "ft_ssl_md5.h"
 
-int			main(int ac, char **av, char **env)
+int			main(int ac, char **av)
 {
-	ft_putstr("Hello world!\n");
+	struct s_ssl	ssl;
 
-	(void)ac;
-	(void)av;
-	(void)env;
-	return (1);
+	if (ac > 1)
+	{
+		if (!parse_args(&ssl, ac, av))
+			return (1);
+	}
+	else
+	{
+		if (!handle_shell(&ssl))
+			return (1);
+	}
+	return (0);
 }

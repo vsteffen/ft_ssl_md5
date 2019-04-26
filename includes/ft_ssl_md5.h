@@ -3,15 +3,23 @@
 
 # include "libft.h"
 
-typedef struct		s_elem {
-	struct s_elem	*prec;
-	struct s_elem	*next;
-}					t_elem;
+typedef struct		s_input {
+	int8_t			*data;
+	char			*filename;
+	int				fd;
+	struct s_input	*next;
+}					t_input;
 
-typedef struct		s_ssl_md5 {
-	t_elem			*elem;
-	t_elem			*current;
-	t_elem			*last;
-}					t_ssl_md5;
+typedef struct		s_ssl {
+	int8_t			args[4];
+	//  0 -> -p, echo STDIN to STDOUT and append the checksum to STDOUT
+	//  1 -> -q, quiet mode
+	//  2 -> -r, reverse the format of the output.
+	//  3 -> -s, print the sum of the given string
+	t_input			*inputs;
+}					t_ssl;
+
+int8_t				parse_args(t_ssl *ssl, int ac, char **av);
+int8_t				handle_shell(t_ssl *ssl);
 
 #endif
