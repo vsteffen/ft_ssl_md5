@@ -1,5 +1,5 @@
 *.o
-/ft_ssl_md5
+/ft_ssl
 *.dSYM
 a.out
 *.a
