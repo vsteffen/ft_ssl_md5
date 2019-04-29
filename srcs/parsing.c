@@ -23,6 +23,8 @@ int8_t	add_flag(t_ssl *ssl, int8_t flag_i)
 			if (ssl->flags_all[i].uniq && ssl->flags_all[i].enable)
 				return (0);
 			ssl->flags_all[i].enable = 1;
+			if (ssl->flags_all[i].func)
+				return (ssl->flags_all[i].func(ssl, NULL));
 			return (1);
 		}
 	}
@@ -59,17 +61,18 @@ int8_t	parse_args(t_ssl *ssl, char **args)
 {
 	if (*args)
 		if (!(ssl->crypt = search_crypt(ssl, *args)))
-			return (0);
-	args++;
-	while (*args)
-	{
-		ft_printf("%s\n", *args);
-		if (!detect_and_handle_arg(ssl, *args))
 		{
-			ssl->arg_error = *args;
-			return(0);
+			ssl->arg_error = INVALID_ARG;
+			ssl->arg_error_more_1 = args[ssl->cur_arg];
+			return (0);
 		}
-		args++;
+	ssl->cur_arg = 1;
+	while (args[ssl->cur_arg])
+	{
+		ft_printf("ARG [%s]:\n", args[ssl->cur_arg]);
+		if (!detect_and_handle_arg(ssl, args[ssl->cur_arg]))
+			return(0);
+		ssl->cur_arg++;
 	}
 	return (1);
 }

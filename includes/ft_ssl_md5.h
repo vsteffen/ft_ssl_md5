@@ -7,7 +7,10 @@
 # define FLAG_MAX_PER_CRYPT 4
 # define CRYPT_NB 2
 
-# define USAGE "ft_ssl: Error: '%s' is an invalid command.\nStandard commands:\n\nMessage Digest commands:\nmd5\nsha256\n\nCipher commands:\n"
+# define USAGE "Standard commands:\n\nMessage Digest commands:\nmd5\nsha256\n\nCipher commands:\n"
+
+# define INVALID_ARG "ft_ssl: Error: '%s' is an invalid command.\n"
+# define INVALID_FLAG "ft_ssl: Error: option '%s' requires an argument\n"
 
 typedef struct		s_input {
 	int8_t			*data;
@@ -18,7 +21,7 @@ typedef struct		s_input {
 
 struct				s_ssl;
 
-typedef int8_t		(t_fn_flag)(struct s_ssl *ssl);
+typedef int8_t		(t_fn_flag)(struct s_ssl *ssl, void *data);
 typedef char		*(t_fn_crypt)(struct s_ssl *ssl);
 
 typedef struct		s_flag {
@@ -37,11 +40,16 @@ typedef struct		s_crypt {
 }					t_crypt;
 
 typedef struct		s_ssl {
+	char			**args;
 	t_flag			*flags_all;
 	t_crypt			*crypts;
 	t_crypt			*crypt;
 	t_input			*inputs;
+	uint8_t			cur_arg;
 	const char		*arg_error;
+	const char		*arg_error_more_1;
+	const char		*arg_error_more_2;
+	const char		*arg_error_more_3;
 }					t_ssl;
 
 /*
@@ -54,5 +62,7 @@ typedef struct		s_ssl {
 
 int8_t				parse_args(t_ssl *ssl, char **args);
 int8_t				handle_shell(t_ssl *ssl);
+
+int8_t				fn_arg_s(t_ssl *ssl, void *data);
 
 #endif
