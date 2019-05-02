@@ -42,6 +42,8 @@ HPATH 	=	-I $(ROOT)/includes -I $(LIBFT)/includes
 SRC =	main.c \
 		parsing.c \
 		shell.c \
+		tools_inputs.c \
+		debug.c \
 		fn_flags.c
 
 PRE_CHECK_SUB_LIBFT	:= $(LIBFT)/Makefile

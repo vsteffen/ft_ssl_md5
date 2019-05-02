@@ -43,6 +43,7 @@ int8_t	detect_and_handle_arg(t_ssl *ssl, char *arg)
 			return (0);
 		return (1);
 	}
+	add_input(ssl, create_input(NULL, arg));
 	return (1);
 }
 
@@ -57,22 +58,45 @@ t_crypt	*search_crypt(t_ssl *ssl, const char *name_given)
 	return (NULL);
 }
 
+int8_t	get_inputs_in_stdin(t_ssl *ssl)
+{
+	char	stdin_buff[BUFF_STDIN + 1];
+	char	*data;
+	int		ret;
+
+	data = ft_strdup("");
+	while ((ret = read(0, stdin_buff, BUFF_STDIN)) > 0)
+	{
+		stdin_buff[ret] = '\0';
+		data = ft_strjoinaf1(data, stdin_buff);
+	}
+	if (ret == -1)
+	{
+		ssl->error = INVALID_STDIN;
+		ssl->error_no_usage = 1;
+		return (0);
+	}
+	add_input_first(ssl, create_input(data, NULL));
+	return (1);
+}
+
 int8_t	parse_args(t_ssl *ssl, char **args)
 {
 	if (*args)
 		if (!(ssl->crypt = search_crypt(ssl, *args)))
 		{
-			ssl->arg_error = INVALID_ARG;
-			ssl->arg_error_more_1 = args[ssl->cur_arg];
+			ssl->error = INVALID_ARG;
+			ssl->error_more_1 = args[ssl->cur_arg];
 			return (0);
 		}
 	ssl->cur_arg = 1;
 	while (args[ssl->cur_arg])
 	{
-		ft_printf("ARG [%s]:\n", args[ssl->cur_arg]);
 		if (!detect_and_handle_arg(ssl, args[ssl->cur_arg]))
 			return(0);
 		ssl->cur_arg++;
 	}
+	if (!ssl->inputs || ssl->flags_all[FLAG_P].enable)
+		return (get_inputs_in_stdin(ssl));
 	return (1);
 }
