@@ -33,7 +33,8 @@
 # define INVALID_STDIN "ft_ssl: standard input: Bad file descriptor\n"
 
 typedef struct		s_input {
-	int8_t			*data;
+	char			*data;
+	size_t			len;
 	char			*filename;
 	int				fd;
 	struct s_input	*next;
@@ -42,7 +43,7 @@ typedef struct		s_input {
 struct				s_ssl;
 
 typedef int8_t		(t_fn_flag)(struct s_ssl *ssl, void *data);
-typedef char		*(t_fn_crypt)(struct s_ssl *ssl);
+typedef int8_t		(t_fn_crypt)(struct s_ssl *ssl);
 
 typedef struct		s_flag {
 	const char		*name;
@@ -60,9 +61,11 @@ typedef struct		s_crypt {
 }					t_crypt;
 
 typedef struct		s_ssl {
+	char			*res;
+	int8_t			verbose;
 	char			**args;
-	t_flag			*flags_all;
-	t_crypt			*crypts;
+	t_flag			flags_all[FLAG_NB];
+	t_crypt			crypts[CRYPT_NB];
 	t_crypt			*crypt;
 	t_input			*inputs;
 	uint8_t			cur_arg;
@@ -78,11 +81,13 @@ int8_t				handle_shell(t_ssl *ssl);
 
 int8_t				fn_arg_s(t_ssl *ssl, void *data);
 
-t_input				*create_input(void *data, char *filename);
+t_input				*create_input(void *data, char *filename, size_t len);
 void				add_input(t_ssl *ssl, t_input *new_input);
 void				add_input_first(t_ssl *ssl, t_input *new_input);
 void				free_inputs(t_ssl *ssl);
 
 void				print_inputs(t_ssl *ssl);
+
+int8_t				handle_md5(t_ssl *ssl);
 
 #endif

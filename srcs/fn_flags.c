@@ -6,7 +6,7 @@ int8_t	fn_arg_s(t_ssl *ssl, void *data)
 	if (ssl->args[ssl->cur_arg + 1])
 	{
 		ssl->cur_arg++;
-		add_input(ssl, create_input(ft_strdup(ssl->args[ssl->cur_arg]), NULL));
+		add_input(ssl, create_input(ft_strdup(ssl->args[ssl->cur_arg]), NULL, ft_strlen(ft_strdup(ssl->args[ssl->cur_arg]))));
 	}
 	else
 	{
