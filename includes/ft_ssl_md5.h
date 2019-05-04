@@ -89,5 +89,6 @@ void				free_inputs(t_ssl *ssl);
 void				print_inputs(t_ssl *ssl);
 
 int8_t				handle_md5(t_ssl *ssl);
+void				md5(char *dst, char *data, char *iv);
 
 #endif

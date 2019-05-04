@@ -80,6 +80,8 @@ int8_t	get_inputs_in_stdin(t_ssl *ssl)
 		return (0);
 	}
 	add_input_first(ssl, create_input(data, NULL, len));
+	if (ssl->flags_all[FLAG_P].enable)
+		ft_putstr(data);
 	return (1);
 }
 

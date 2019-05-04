@@ -1,9 +1,29 @@
 #include "ft_ssl_md5.h"
 
-void		print_md5_res(t_ssl *ssl)
+void		print_md5_res(t_ssl *ssl, t_input *input)
 {
 	(void)ssl;
-	ft_printf("Print md5 res here\n");
+	if (ssl->flags_all[FLAG_Q].enable)
+	{
+		if (input->filename)
+			ft_printf("%s\n", ssl->res);
+		else
+			ft_printf("%s\n", ssl->res);
+	}
+	else if (ssl->flags_all[FLAG_R].enable)
+	{
+		if (input->filename)
+			ft_printf("%s %s\n", ssl->res, input->filename);
+		else
+			ft_printf("%s \"%s\"\n", ssl->res, (char *)input->data);
+	}
+	else
+	{
+		if (input->filename)
+			ft_printf("MD5(%s) = %s\n", input->filename, ssl->res);
+		else
+			ft_printf("MD5(\"%s\") = %s\n", (char *)input->data, ssl->res);
+	}
 }
 
 int8_t		handle_md5_file(t_ssl *ssl, t_input *input, char *iv)
@@ -29,11 +49,12 @@ int8_t		handle_md5_raw(t_ssl *ssl, t_input *input, char *iv)
 {
 	char	dst[33];
 	char	bloc_padded[64];
-	char	tmp;
+	// char	tmp;
 	size_t	data_read;
 
-	data_read = input->len;
-	while (data_read + 64 > input->len)
+	(void)ssl;
+	data_read = 0;
+	while (data_read + 64 < input->len)
 	{
 		data_read += 64;
 		md5(dst, input->data + data_read, iv);
@@ -55,25 +76,25 @@ void		md5(char *dst, char *data, char *iv)
 
 int8_t		handle_md5(t_ssl *ssl)
 {
-	t_input		*input;
+	t_input		*cur_input;
 	char		iv[16];
 	int8_t		ret;
 	int8_t		ret_tmp;
 
-	ft_memcpy(iv, (char *){0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10}, 16);
-	tmp = ssl->input;
+	ft_memcpy(iv, (char[]){0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10}, 16);
+	cur_input = ssl->inputs;
 	ret = 1;
-	while (tmp)
+	while (cur_input)
 	{
-		if (tmp->filename)
-			ret_tmp = handle_md5_file(ssl, tmp, iv);
+		if (cur_input->filename)
+			ret_tmp = handle_md5_file(ssl, cur_input, iv);
 		else
-			ret_tmp = handle_md5_raw(ssl, tmp, iv);
+			ret_tmp = handle_md5_raw(ssl, cur_input, iv);
 		if (!ret_tmp)
 			ret = 0;
 		if (ssl->verbose)
-			print_md5_res;
-		tmp = tmp->next;
+			print_md5_res(ssl, cur_input);
+		cur_input = cur_input->next;
 	}
 	return (ret);
 }

@@ -34,6 +34,8 @@ char		*ft_ssl(char **args, int8_t verbose)
 			print_error(&ssl);
 	}
 	print_inputs(&ssl);
+	ssl.crypt->func(&ssl);
+	free_inputs(&ssl);
 	return (ssl.res);
 }
 
