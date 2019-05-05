@@ -27,6 +27,7 @@
 # define CRYPT_NB 2
 
 # define USAGE "Standard commands:\n\nMessage Digest commands:\nmd5\nsha256\n\nCipher commands:\n"
+# define USAGE_EMPTY_ARG "Usage: ft_ssl command [command opts] [command args]\n"
 
 # define INVALID_ARG "ft_ssl: Error: '%s' is an invalid command.\n"
 # define INVALID_FLAG "ft_ssl: Error: option '%s' requires an argument\n"
