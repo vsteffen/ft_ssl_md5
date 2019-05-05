@@ -19,8 +19,8 @@ char		*ft_ssl(char **args, int8_t verbose)
 	struct s_ssl	ssl;
 
 	ft_bzero(&ssl, sizeof(t_ssl));
-	ft_memcpy(ssl.crypts, (t_crypt[]){{"md5", handle_md5, {0, 1, 2, 3}}, {"sha256", NULL, {0, 1, 2, 3}}}, sizeof(t_crypt) * CRYPT_NB);
-	ft_memcpy(ssl.flags_all, (t_flag[]){{.name = "-p"}, {.name = "-q"}, {.name = "-r"}, {.name = "-s", .func = fn_arg_s }}, sizeof(t_flag) * FLAG_NB);
+	ft_memcpy(ssl.crypts, (struct s_crypt[]){{"md5", handle_md5, {0, 1, 2, 3}}, {"sha256", NULL, {0, 1, 2, 3}}}, sizeof(t_crypt) * CRYPT_NB);
+	ft_memcpy(ssl.flags_all, (struct s_flag[]){{"-p", 0, 0, NULL, NULL}, {"-q", 0, 0, NULL, NULL}, {"-r", 0, 0, NULL, NULL}, {"-s", 0, 0, NULL, fn_arg_s }}, sizeof(t_flag) * FLAG_NB);
 	ssl.args = args;
 	ssl.verbose = verbose;
 	if (*args)
@@ -41,7 +41,7 @@ char		*ft_ssl(char **args, int8_t verbose)
 	}
 	if (ssl.crypt)
 	{
-		print_inputs(&ssl);
+		// print_inputs(&ssl);
 		ssl.crypt->func(&ssl);
 		free_inputs(&ssl);
 		return (ssl.res);

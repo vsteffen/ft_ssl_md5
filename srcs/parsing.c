@@ -58,7 +58,7 @@ int8_t	detect_and_handle_arg(t_ssl *ssl, char *arg, int8_t *must_be_file)
 		}
 	}
 	*must_be_file = 1;
-	add_input(ssl, create_input(NULL, arg, 0));
+	add_input(ssl, create_input(NULL, arg, 0, 0));
 	return (1);
 }
 
@@ -94,9 +94,7 @@ int8_t	get_inputs_in_stdin(t_ssl *ssl)
 		ssl->error_no_usage = 1;
 		return (0);
 	}
-	add_input_first(ssl, create_input(data, NULL, len));
-	if (ssl->flags_all[FLAG_P].enable)
-		ft_putstr(data);
+	add_input_first(ssl, create_input(data, NULL, len, 1));
 	return (1);
 }
 

@@ -38,6 +38,7 @@ typedef struct		s_input {
 	size_t			len;
 	char			*filename;
 	int				fd;
+	int8_t			is_stdin;
 	struct s_input	*next;
 }					t_input;
 
@@ -48,7 +49,6 @@ typedef int8_t		(t_fn_crypt)(struct s_ssl *ssl);
 
 typedef struct		s_flag {
 	const char		*name;
-	int8_t			type;
 	int8_t			uniq;
 	int8_t			enable;
 	void			*data;
@@ -82,7 +82,7 @@ int8_t				handle_shell(t_ssl *ssl);
 
 int8_t				fn_arg_s(t_ssl *ssl, void *data);
 
-t_input				*create_input(void *data, char *filename, size_t len);
+t_input				*create_input(void *data, char *filename, size_t len, int8_t is_stdin);
 void				add_input(t_ssl *ssl, t_input *new_input);
 void				add_input_first(t_ssl *ssl, t_input *new_input);
 void				free_inputs(t_ssl *ssl);

@@ -3,13 +3,14 @@
 void		print_md5_res(t_ssl *ssl, t_input *input)
 {
 	(void)ssl;
-	if (ssl->flags_all[FLAG_Q].enable)
+	if (input->is_stdin)
 	{
-		if (input->filename)
-			ft_printf("%s\n", ssl->res);
-		else
-			ft_printf("%s\n", ssl->res);
+		if (ssl->flags_all[FLAG_P].enable)
+			ft_printf("%s", (char *)input->data);
+		ft_printf("%s\n", ssl->res);
 	}
+	else if (ssl->flags_all[FLAG_Q].enable)
+		ft_printf("%s\n", ssl->res);
 	else if (ssl->flags_all[FLAG_R].enable)
 	{
 		if (input->filename)
