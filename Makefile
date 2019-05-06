@@ -42,6 +42,7 @@ HPATH 	=	-I $(ROOT)/includes -I $(LIBFT)/includes
 SRC =	main.c \
 		parsing.c \
 		shell.c \
+		tools.c \
 		tools_inputs.c \
 		debug.c \
 		md5.c \
