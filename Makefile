@@ -46,6 +46,8 @@ SRC =	main.c \
 		tools_inputs.c \
 		debug.c \
 		md5.c \
+		md5_auxiliaries.c \
+		md5_rounds.c \
 		fn_flags.c
 
 PRE_CHECK_SUB_LIBFT	:= $(LIBFT)/Makefile

@@ -44,10 +44,14 @@ void		print_md5_res(t_ssl *ssl, t_input *input, char *digest_str)
 
 void		md5_update(uint8_t *bloc, uint8_t *digest)
 {
-	(void)bloc;
-	(void)digest;
+	t_md5_words		words;
+
+	words.a = (uint32_t)*(digest + 0);
+	words.b = (uint32_t)*(digest + 8);
+	words.c = (uint32_t)*(digest + 16);
+	words.d = (uint32_t)*(digest + 24);
+	md5_rounds(&words, bloc);
 	ft_printf("MD5_UPDATE\n");
-	// ft_strcpy(dst, "d41d8cd98f00b204e9800998ecf8427e");
 }
 
 int8_t		handle_md5_file(t_ssl *ssl, t_input *input, uint8_t *digest)

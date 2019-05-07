@@ -33,6 +33,13 @@
 # define INVALID_FLAG "ft_ssl: Error: option '%s' requires an argument\n"
 # define INVALID_STDIN "ft_ssl: standard input: Bad file descriptor\n"
 
+typedef struct		s_md5_words {
+	uint32_t		a;
+	uint32_t		b;
+	uint32_t		c;
+	uint32_t		d;
+}					t_md5_words;
+
 typedef struct		s_input {
 	char			*data;
 	size_t			len;
@@ -91,6 +98,11 @@ void				print_inputs(t_ssl *ssl);
 void				print_bloc(uint8_t *bloc, size_t size);
 
 int8_t				handle_md5(t_ssl *ssl);
+void				md5_rounds(t_md5_words *words, uint8_t *bloc);
+uint32_t			md5_f(uint32_t x, uint32_t y, uint32_t z);
+uint32_t			md5_g(uint32_t x, uint32_t y, uint32_t z);
+uint32_t			md5_h(uint32_t x, uint32_t y, uint32_t z);
+uint32_t			md5_i(uint32_t x, uint32_t y, uint32_t z);
 void				dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper);
 
 #endif
