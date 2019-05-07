@@ -7,6 +7,7 @@ void	print_inputs(t_ssl *ssl)
 
 	tmp = ssl->inputs;
 	i = 0;
+	ft_putchar('\n');
 	while (tmp)
 	{
 		ft_printf("ARG [%zu]\n", i);
@@ -17,4 +18,22 @@ void	print_inputs(t_ssl *ssl)
 		tmp = tmp->next;
 		i++;
 	}
+}
+
+void	print_bloc(uint8_t *bloc, size_t size)
+{
+	size_t		i;
+
+	ft_printf("\nDebug: bloc [%p]", (void *)bloc);
+	i = 0;
+	while (i < size)
+	{
+		if (i % 16 == 0)
+			ft_printf("\n%.8zx ", i);
+		if (i % 8 == 0)
+			ft_putchar(' ');
+		ft_printf(" %.2x", bloc[i]);
+		i++;
+	}
+	ft_printf("\n\n", (void *)bloc);
 }

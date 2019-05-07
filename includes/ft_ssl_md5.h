@@ -88,6 +88,7 @@ void				add_input_first(t_ssl *ssl, t_input *new_input);
 void				free_inputs(t_ssl *ssl);
 
 void				print_inputs(t_ssl *ssl);
+void				print_bloc(uint8_t *bloc, size_t size);
 
 int8_t				handle_md5(t_ssl *ssl);
 void				dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper);
