@@ -36,9 +36,9 @@ void		print_md5_res(t_ssl *ssl, t_input *input, char *digest_str)
 	else
 	{
 		if (input->filename)
-			ft_printf("MD5(%s) = %s\n", input->filename, digest_str);
+			ft_printf("MD5 (%s) = %s\n", input->filename, digest_str);
 		else
-			ft_printf("MD5(\"%s\") = %s\n", (char *)input->data, digest_str);
+			ft_printf("MD5 (\"%s\") = %s\n", (char *)input->data, digest_str);
 	}
 }
 
@@ -46,13 +46,13 @@ void		md5_update(uint8_t *bloc, uint8_t *digest)
 {
 	t_md5_words		words;
 
-	words.a = (uint32_t)*(digest + 0);
-	words.b = (uint32_t)*(digest + 4);
-	words.c = (uint32_t)*(digest + 8);
-	words.d = (uint32_t)*(digest + 12);
+	words.a = *(uint32_t *)(digest + 0);
+	words.b = *(uint32_t *)(digest + 4);
+	words.c = *(uint32_t *)(digest + 8);
+	words.d = *(uint32_t *)(digest + 12);
 	md5_rounds(&words, bloc);
-	*(uint32_t *)(digest) = words.a;
-	*(uint32_t *)(digest + 4)  = words.b;
+	*(uint32_t *)(digest + 0) = words.a;
+	*(uint32_t *)(digest + 4) = words.b;
 	*(uint32_t *)(digest + 8) = words.c;
 	*(uint32_t *)(digest + 12) = words.d;
 	ft_printf("MD5_UPDATE\n");

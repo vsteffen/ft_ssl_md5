@@ -1,5 +1,17 @@
 #include "ft_ssl_md5.h"
 
+void	print_x(uint32_t x[16])
+{
+	int8_t		i;
+
+	i = 0;
+	while (i < 16)
+	{
+		ft_printf("x[%2d] = 0x%x\n", i, x[i]);
+		i++;
+	}
+}
+
 void	md5_rounds(t_md5_words *words, uint8_t *bloc)
 {
 	t_md5_words		tmp;
@@ -30,6 +42,7 @@ void	md5_rounds(t_md5_words *words, uint8_t *bloc)
 		x[i] = *(uint32_t *)(bloc + 4 * i);
 		i++;
 	}
+	// print_x(x);
 	tmp.a = words->a;
 	tmp.b = words->b;
 	tmp.c = words->c;
