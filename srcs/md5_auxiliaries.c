@@ -19,3 +19,8 @@ uint32_t		md5_i(uint32_t x, uint32_t y, uint32_t z)
 {
 	return (y ^ (x | (~z)));
 }
+
+uint32_t		md5_rotate_left(uint32_t x, int8_t n)
+{
+	return (((x) << (n)) | ((x) >> (32 - (n))));
+}

@@ -15,8 +15,6 @@ void			dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper)
 	char		*alph;
 	size_t		length;
 
-	if (nb == 0)
-		return ((void)ft_strcpy(ptr, "0"));
 	length = (size_t)count_numeral_base(nb, 16);
 	if (length < prec)
 		length = prec;

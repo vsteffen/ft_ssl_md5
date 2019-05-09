@@ -6,6 +6,8 @@
 
 # define BUFF_STDIN 2047
 
+
+
 # define FLAG_NB 4
 # define FLAG_MAX_PER_CRYPT 4
 
@@ -98,11 +100,19 @@ void				print_inputs(t_ssl *ssl);
 void				print_bloc(uint8_t *bloc, size_t size);
 
 int8_t				handle_md5(t_ssl *ssl);
+
 void				md5_rounds(t_md5_words *words, uint8_t *bloc);
+void				md5_round_1(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
+void				md5_round_2(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
+void				md5_round_3(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
+void				md5_round_4(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
+
 uint32_t			md5_f(uint32_t x, uint32_t y, uint32_t z);
 uint32_t			md5_g(uint32_t x, uint32_t y, uint32_t z);
 uint32_t			md5_h(uint32_t x, uint32_t y, uint32_t z);
 uint32_t			md5_i(uint32_t x, uint32_t y, uint32_t z);
+uint32_t			md5_rotate_left(uint32_t x, int8_t shift);
+
 void				dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper);
 
 #endif

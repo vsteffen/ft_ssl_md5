@@ -47,10 +47,14 @@ void		md5_update(uint8_t *bloc, uint8_t *digest)
 	t_md5_words		words;
 
 	words.a = (uint32_t)*(digest + 0);
-	words.b = (uint32_t)*(digest + 8);
-	words.c = (uint32_t)*(digest + 16);
-	words.d = (uint32_t)*(digest + 24);
+	words.b = (uint32_t)*(digest + 4);
+	words.c = (uint32_t)*(digest + 8);
+	words.d = (uint32_t)*(digest + 12);
 	md5_rounds(&words, bloc);
+	*(uint32_t *)(digest) = words.a;
+	*(uint32_t *)(digest + 4)  = words.b;
+	*(uint32_t *)(digest + 8) = words.c;
+	*(uint32_t *)(digest + 12) = words.d;
 	ft_printf("MD5_UPDATE\n");
 }
 
@@ -104,7 +108,7 @@ int8_t		handle_md5_raw(t_ssl *ssl, t_input *input, uint8_t *digest)
 			md5_padding(bloc_padded, (uint8_t *)(input->data + data_read), input->len - data_read, &padding_first_bit);
 			md5_update(bloc_padded, digest);
 			data_read = input->len;
-			print_bloc(bloc_padded, 64);
+			// print_bloc(bloc_padded, 64);
 			break ;
 		}
 		md5_update((uint8_t *)(input->data + data_read), digest);
@@ -113,7 +117,7 @@ int8_t		handle_md5_raw(t_ssl *ssl, t_input *input, uint8_t *digest)
 	md5_padding(bloc_padded, (uint8_t *)(input->data + data_read), input->len - data_read, &padding_first_bit);
 	md5_padding_length(bloc_padded, input->len);
 	md5_update(bloc_padded, digest);
-	print_bloc(bloc_padded, 64);
+	// print_bloc(bloc_padded, 64);
 	return (1);
 }
 
