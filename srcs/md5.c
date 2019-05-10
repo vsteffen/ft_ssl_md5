@@ -15,18 +15,28 @@ char		*md5_to_str(uint8_t *digest)
 	return (ft_strdup(ret));
 }
 
-void		print_md5_res(t_ssl *ssl, t_input *input, char *digest_str)
+void		md5_print_error(t_ssl *ssl)
 {
-	(void)ssl;
-	if (input->is_stdin)
+	print_error(ssl);
+	ssl->error = NULL;
+	ssl->error_more_1 = NULL;
+	ssl->error_more_2 = NULL;
+	ssl->error_more_3 = NULL;
+}
+
+void		md5_print(t_ssl *ssl, t_input *input, char *digest_str)
+{
+	if (ssl->error)
+		md5_print_error(ssl);
+	else if (input->is_stdin)
 	{
-		if (ssl->flags_all[FLAG_P].enable)
+		if (ssl->flags_all[SSL_FLAG_P].enable)
 			ft_printf("%s", (char *)input->data);
 		ft_printf("%s\n", digest_str);
 	}
-	else if (ssl->flags_all[FLAG_Q].enable)
+	else if (ssl->flags_all[SSL_FLAG_Q].enable)
 		ft_printf("%s\n", digest_str);
-	else if (ssl->flags_all[FLAG_R].enable)
+	else if (ssl->flags_all[SSL_FLAG_R].enable)
 	{
 		if (input->filename)
 			ft_printf("%s %s\n", digest_str, input->filename);
@@ -55,20 +65,21 @@ void		md5_update(uint8_t *bloc, uint8_t *digest, uint32_t t[65])
 	*(uint32_t *)(digest + 4) = words.b;
 	*(uint32_t *)(digest + 8) = words.c;
 	*(uint32_t *)(digest + 12) = words.d;
-	// ft_printf("MD5_UPDATE\n");
 }
 
-int8_t		handle_md5_file(t_ssl *ssl, t_input *input, uint8_t *digest, uint32_t t[65])
+void		md5_padding_file(uint8_t *bloc, int16_t len_left, int8_t *padding_first_bit)
 {
-	(void)input;
-	(void)digest;
-	(void)t;
-	ft_printf("Handle files here\n");
-	ssl->res = ft_strdup("ffffffffffffffffffffffffffffffff");
-	return (1);
+	uint8_t		i;
+
+	i = len_left;
+	if (!*padding_first_bit)
+		bloc[i++] = 0x80;
+	while (i < 64)
+		bloc[i++] = 0;
+	*padding_first_bit = 1;
 }
 
-void		md5_padding(uint8_t *bloc, uint8_t *data_left, int16_t len_left, int8_t *padding_first_bit)
+void		md5_padding_raw(uint8_t *bloc, uint8_t *data_left, int16_t len_left, int8_t *padding_first_bit)
 {
 	uint8_t		i;
 
@@ -90,6 +101,75 @@ void		md5_padding_length(uint8_t *bloc, size_t total_len)
 	*(uint64_t *)(bloc + 56) = (uint64_t)total_len << 3;
 }
 
+int			md5_open_file(t_ssl *ssl, t_input *input)
+{
+	int				fd;
+	struct stat		st;
+
+	if (stat(input->filename, &st) == -1)
+	{
+		ssl->error = SSL_INVALID_FILE_ERRNO;
+		ssl->error_more_1 = input->filename;
+		ssl->error_more_2 = strerror(errno);
+		return (-1);
+	}
+	if (S_ISDIR(st.st_mode))
+	{
+		ssl->error = SSL_INVALID_FILE_ISDIR;
+		ssl->error_more_1 = input->filename;
+		return (-1);
+	}
+	if ((fd = open(input->filename, O_RDWR)) == -1)
+	{
+		ssl->error = SSL_INVALID_FILE_ERRNO;
+		ssl->error_more_1 = input->filename;
+		ssl->error_more_2 = strerror(errno);
+	}
+	return (fd);
+}
+
+int8_t		handle_md5_file(t_ssl *ssl, t_input *input, uint8_t *digest, uint32_t t[65])
+{
+	int		fd;
+	uint8_t	buff[SSL_BUFF_MD5];
+	ssize_t	ret_read;
+	int8_t	padding_first_bit;
+
+	if ((fd = md5_open_file(ssl, input)) == -1)
+		return (0);
+	padding_first_bit = 0;
+	while ((ret_read = read(fd, buff, SSL_BUFF_MD5)) > 0)
+	{
+		input->len += ret_read;
+		if (ret_read < 56)
+		{
+			md5_padding_file(buff, ret_read, &padding_first_bit);
+			md5_padding_length(buff, input->len);
+			md5_update(buff, digest, t);
+		}
+		else if (ret_read < 64)
+		{
+			md5_padding_file(buff, ret_read, &padding_first_bit);
+			md5_update(buff, digest, t);
+			md5_padding_file(buff, 0, &padding_first_bit);
+			md5_padding_length(buff, input->len);
+			md5_update(buff, digest, t);
+		}
+		else
+			md5_update(buff, digest, t);
+	}
+	if (ret_read == (ssize_t)-1)
+	{
+		ssl->error_no_usage = 1;
+		ssl->error = SSL_INVALID_FILE_ERRNO;
+		ssl->error_more_1 = input->filename;
+		ssl->error_more_2 = strerror(errno);
+		return (0);
+	}
+	close(fd);
+	return (1);
+}
+
 int8_t		handle_md5_raw(t_ssl *ssl, t_input *input, uint8_t *digest, uint32_t t[65])
 {
 	uint8_t	bloc_padded[64];
@@ -103,31 +183,28 @@ int8_t		handle_md5_raw(t_ssl *ssl, t_input *input, uint8_t *digest, uint32_t t[6
 	{
 		if ((input->len - data_read) < 64)
 		{
-			md5_padding(bloc_padded, (uint8_t *)(input->data + data_read), input->len - data_read, &padding_first_bit);
+			md5_padding_raw(bloc_padded, (uint8_t *)(input->data + data_read), input->len - data_read, &padding_first_bit);
 			md5_update(bloc_padded, digest, t);
 			data_read = input->len;
-			// print_bloc(bloc_padded, 64);
 			break ;
 		}
 		md5_update((uint8_t *)(input->data + data_read), digest, t);
 		data_read += 64;
 	}
-	md5_padding(bloc_padded, (uint8_t *)(input->data + data_read), input->len - data_read, &padding_first_bit);
+	md5_padding_raw(bloc_padded, (uint8_t *)(input->data + data_read), input->len - data_read, &padding_first_bit);
 	md5_padding_length(bloc_padded, input->len);
 	md5_update(bloc_padded, digest, t);
-	// print_bloc(bloc_padded, 64);
 	return (1);
 }
 
 int8_t		handle_md5(t_ssl *ssl)
 {
 	t_input		*cur_input;
-	uint8_t			digest[16];
-	uint32_t		t[65];
-	int8_t			ret;
-	int8_t			ret_tmp;
+	uint8_t		digest[16];
+	uint32_t	t[65];
+	int8_t		ret;
+	int8_t		ret_tmp;
 
-	ft_memcpy(digest, (uint8_t[]){0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10}, 16);
 	ft_memcpy(t, (uint32_t[]){ 0x0,
 		0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
 		0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
@@ -147,18 +224,21 @@ int8_t		handle_md5(t_ssl *ssl)
 		0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391},
 		65 * sizeof(uint32_t));
 	cur_input = ssl->inputs;
+	ssl->error_no_usage = 1;
 	ret = 1;
 	while (cur_input)
 	{
+		ft_memcpy(digest, (uint8_t[]){0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10}, 16);
 		if (cur_input->filename)
 			ret_tmp = handle_md5_file(ssl, cur_input, digest, t);
 		else
 			ret_tmp = handle_md5_raw(ssl, cur_input, digest, t);
 		if (!ret_tmp)
 			ret = 0;
-		ssl->res = md5_to_str(digest);
+		else
+			ssl->res = md5_to_str(digest);
 		if (ssl->verbose)
-			print_md5_res(ssl, cur_input, ssl->res);
+			md5_print(ssl, cur_input, ssl->res);
 		cur_input = cur_input->next;
 	}
 	return (ret);

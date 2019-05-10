@@ -11,7 +11,7 @@ void		print_error(t_ssl *ssl)
 	else
 		ft_printf(ssl->error);
 	if (!ssl->error_no_usage)
-		ft_printf(USAGE);
+		ft_printf(SSL_USAGE);
 }
 
 char		*ft_ssl(char **args, int8_t verbose)
@@ -19,8 +19,8 @@ char		*ft_ssl(char **args, int8_t verbose)
 	struct s_ssl	ssl;
 
 	ft_bzero(&ssl, sizeof(t_ssl));
-	ft_memcpy(ssl.crypts, (struct s_crypt[]){{"md5", handle_md5, {0, 1, 2, 3}}, {"sha256", NULL, {0, 1, 2, 3}}}, sizeof(t_crypt) * CRYPT_NB);
-	ft_memcpy(ssl.flags_all, (struct s_flag[]){{"-p", 0, 0, NULL, NULL}, {"-q", 0, 0, NULL, NULL}, {"-r", 0, 0, NULL, NULL}, {"-s", 0, 0, NULL, fn_arg_s }}, sizeof(t_flag) * FLAG_NB);
+	ft_memcpy(ssl.crypts, (struct s_crypt[]){{"md5", handle_md5, {0, 1, 2, 3}}, {"sha256", NULL, {0, 1, 2, 3}}}, sizeof(t_crypt) * SSL_CRYPT_NB);
+	ft_memcpy(ssl.flags_all, (struct s_flag[]){{"-p", 0, 0, NULL, NULL}, {"-q", 0, 0, NULL, NULL}, {"-r", 0, 0, NULL, NULL}, {"-s", 0, 0, NULL, fn_arg_s }}, sizeof(t_flag) * SSL_FLAG_NB);
 	ssl.args = args;
 	ssl.verbose = verbose;
 	if (*args)
@@ -57,7 +57,7 @@ int			main(int ac, char **av)
 	if (!ret)
 	{
 		if (ac == 1)
-			ft_printf(USAGE_EMPTY_ARG);
+			ft_printf(SSL_USAGE_EMPTY_ARG);
 		return (1);
 	}
 	return (0);

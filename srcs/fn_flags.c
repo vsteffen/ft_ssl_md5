@@ -10,7 +10,7 @@ int8_t	fn_arg_s(t_ssl *ssl, void *data)
 	}
 	else
 	{
-		ssl->error = INVALID_FLAG;
+		ssl->error = SSL_INVALID_FLAG;
 		ssl->error_more_1 = ssl->args[ssl->cur_arg];
 		return (0);
 	}

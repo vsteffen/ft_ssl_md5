@@ -5,10 +5,10 @@ int8_t	flag_detected(t_ssl *ssl, char *flag_name)
 	int8_t		i;
 
 	i = -1;
-	while (++i < FLAG_NB)
+	while (++i < SSL_FLAG_NB)
 		if (ft_strcmp(ssl->flags_all[i].name, flag_name) == 0)
 			return (i);
-	ssl->error = INVALID_ARG;
+	ssl->error = SSL_INVALID_ARG;
 	ssl->error_more_1 = flag_name;
 	return (-1);
 }
@@ -18,13 +18,13 @@ int8_t	add_flag(t_ssl *ssl, int8_t flag_i)
 	int8_t	i;
 
 	i = -1;
-	while (++i < FLAG_MAX_PER_CRYPT)
+	while (++i < SSL_FLAG_MAX_PER_CRYPT)
 	{
 		if (ssl->crypt->flags[i] == flag_i)
 		{
 			if (ssl->flags_all[i].uniq && ssl->flags_all[i].enable)
 			{
-				ssl->error = INVALID_ARG;
+				ssl->error = SSL_INVALID_ARG;
 				ssl->error_more_1 = ssl->flags_all[i].name;
 				return (0);
 			}
@@ -67,7 +67,7 @@ t_crypt	*search_crypt(t_ssl *ssl, const char *name_given)
 	int8_t		i;
 
 	i = -1;
-	while (++i < CRYPT_NB)
+	while (++i < SSL_CRYPT_NB)
 		if (ft_strcmp(ssl->crypts[i].name, name_given) == 0)
 			return (&(ssl->crypts[i]));
 	return (NULL);
@@ -75,14 +75,14 @@ t_crypt	*search_crypt(t_ssl *ssl, const char *name_given)
 
 int8_t	get_inputs_in_stdin(t_ssl *ssl)
 {
-	char	stdin_buff[BUFF_STDIN + 1];
+	char	stdin_buff[SSL_BUFF + 1];
 	char	*data;
 	size_t	len;
 	int		ret;
 
 	data = ft_strdup("");
 	len = 0;
-	while ((ret = read(0, stdin_buff, BUFF_STDIN)) > 0)
+	while ((ret = read(0, stdin_buff, SSL_BUFF)) > 0)
 	{
 		stdin_buff[ret] = '\0';
 		data = ft_strjoinaf1(data, stdin_buff);
@@ -90,7 +90,7 @@ int8_t	get_inputs_in_stdin(t_ssl *ssl)
 	}
 	if (ret == -1)
 	{
-		ssl->error = INVALID_STDIN;
+		ssl->error = SSL_INVALID_STDIN;
 		ssl->error_no_usage = 1;
 		return (0);
 	}
@@ -105,7 +105,7 @@ int8_t	parse_args(t_ssl *ssl, char **args)
 	if (*args)
 		if (!(ssl->crypt = search_crypt(ssl, *args)))
 		{
-			ssl->error = INVALID_ARG;
+			ssl->error = SSL_INVALID_ARG;
 			ssl->error_more_1 = args[ssl->cur_arg];
 			return (0);
 		}
@@ -117,7 +117,7 @@ int8_t	parse_args(t_ssl *ssl, char **args)
 			return(0);
 		ssl->cur_arg++;
 	}
-	if (!ssl->inputs || ssl->flags_all[FLAG_P].enable)
+	if (!ssl->inputs || ssl->flags_all[SSL_FLAG_P].enable)
 		return (get_inputs_in_stdin(ssl));
 	return (1);
 }

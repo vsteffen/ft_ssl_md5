@@ -3,21 +3,22 @@
 
 # include "libft.h"
 # include <fcntl.h>
+# include <sys/errno.h>
+# include <sys/stat.h>
 
-# define BUFF_STDIN 2047
+# define SSL_BUFF 2048
+# define SSL_BUFF_MD5 64
 
-
-
-# define FLAG_NB 4
-# define FLAG_MAX_PER_CRYPT 4
+# define SSL_FLAG_NB 4
+# define SSL_FLAG_MAX_PER_CRYPT 4
 
 /*
 **	FLAGS TAB
 */
-# define FLAG_P 0
-# define FLAG_Q 1
-# define FLAG_R 2
-# define FLAG_S 3
+# define SSL_FLAG_P 0
+# define SSL_FLAG_Q 1
+# define SSL_FLAG_R 2
+# define SSL_FLAG_S 3
 
 /*
 **	[0] -> -p, echo STDIN to STDOUT and append the checksum to STDOUT
@@ -26,14 +27,16 @@
 **	[3] -> -s, print the sum of the given string
 */
 
-# define CRYPT_NB 2
+# define SSL_CRYPT_NB 2
 
-# define USAGE "Standard commands:\n\nMessage Digest commands:\nmd5\nsha256\n\nCipher commands:\n"
-# define USAGE_EMPTY_ARG "Usage: ft_ssl command [command opts] [command args]\n"
+# define SSL_USAGE "Standard commands:\n\nMessage Digest commands:\nmd5\nsha256\n\nCipher commands:\n"
+# define SSL_USAGE_EMPTY_ARG "Usage: ft_ssl command [command opts] [command args]\n"
 
-# define INVALID_ARG "ft_ssl: Error: '%s' is an invalid command.\n"
-# define INVALID_FLAG "ft_ssl: Error: option '%s' requires an argument\n"
-# define INVALID_STDIN "ft_ssl: standard input: Bad file descriptor\n"
+# define SSL_INVALID_ARG "ft_ssl: Error: '%s' is an invalid command.\n"
+# define SSL_INVALID_FLAG "ft_ssl: Error: option '%s' requires an argument\n"
+# define SSL_INVALID_STDIN "ft_ssl: standard input: Bad file descriptor\n"
+# define SSL_INVALID_FILE_ERRNO "ft_ssl: %s: %s\n"
+# define SSL_INVALID_FILE_ISDIR "ft_ssl: %s: Is a directory\n"
 
 typedef struct		s_md5_words {
 	uint32_t		a;
@@ -67,19 +70,19 @@ typedef struct		s_flag {
 typedef struct		s_crypt {
 	const char		*name;
 	t_fn_crypt		*func;
-	int8_t			flags[FLAG_MAX_PER_CRYPT];
+	int8_t			flags[SSL_FLAG_MAX_PER_CRYPT];
 }					t_crypt;
 
 typedef struct		s_ssl {
 	char			*res;
 	int8_t			verbose;
 	char			**args;
-	t_flag			flags_all[FLAG_NB];
-	t_crypt			crypts[CRYPT_NB];
+	t_flag			flags_all[SSL_FLAG_NB];
+	t_crypt			crypts[SSL_CRYPT_NB];
 	t_crypt			*crypt;
 	t_input			*inputs;
 	uint8_t			cur_arg;
-	const char		*error;
+	char			*error;
 	const char		*error_more_1;
 	const char		*error_more_2;
 	const char		*error_more_3;
@@ -88,6 +91,7 @@ typedef struct		s_ssl {
 
 int8_t				parse_args(t_ssl *ssl, char **args);
 int8_t				handle_shell(t_ssl *ssl);
+void				print_error(t_ssl *ssl);
 
 int8_t				fn_arg_s(t_ssl *ssl, void *data);
 
