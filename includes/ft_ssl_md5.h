@@ -101,7 +101,7 @@ void				print_bloc(uint8_t *bloc, size_t size);
 
 int8_t				handle_md5(t_ssl *ssl);
 
-void				md5_rounds(t_md5_words *words, uint8_t *bloc);
+void				md5_rounds(t_md5_words *words, uint8_t *bloc, uint32_t t[65]);
 void				md5_round_1(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
 void				md5_round_2(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
 void				md5_round_3(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
