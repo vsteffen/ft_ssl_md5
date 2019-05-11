@@ -20,6 +20,7 @@ void	add_input(t_ssl *ssl, t_input *new_input)
 {
 	t_input		*tmp;
 
+	ssl->inputs_nb++;
 	tmp = ssl->inputs;
 	if (!tmp)
 	{
@@ -35,6 +36,7 @@ void	add_input_first(t_ssl *ssl, t_input *new_input)
 {
 	t_input		*tmp;
 
+	ssl->inputs_nb++;
 	tmp = ssl->inputs;
 	ssl->inputs = new_input;
 	if (!tmp)

@@ -23,7 +23,7 @@ GIT	=	/usr/bin/git
 
 OBJ = $(patsubst %.c, $(OPATH)/%.o, $(SRC))
 
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address	
 
 ifeq ($(no-asm),y)
 	NO-ASM:= no-asm

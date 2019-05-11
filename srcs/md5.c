@@ -204,6 +204,7 @@ int8_t		handle_md5(t_ssl *ssl)
 	uint32_t	t[65];
 	int8_t		ret;
 	int8_t		ret_tmp;
+	uint8_t		i_res;
 
 	ft_memcpy(t, (uint32_t[]){ 0x0,
 		0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
@@ -226,6 +227,8 @@ int8_t		handle_md5(t_ssl *ssl)
 	cur_input = ssl->inputs;
 	ssl->error_no_usage = 1;
 	ret = 1;
+	ssl->res = (char **)malloc(sizeof(char*) * (ssl->inputs_nb + 1));
+	i_res = 0;
 	while (cur_input)
 	{
 		ft_memcpy(digest, (uint8_t[]){0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10}, 16);
@@ -234,12 +237,17 @@ int8_t		handle_md5(t_ssl *ssl)
 		else
 			ret_tmp = handle_md5_raw(ssl, cur_input, digest, t);
 		if (!ret_tmp)
+		{
 			ret = 0;
+			ssl->res[i_res] = ft_strdup("");
+		}
 		else
-			ssl->res = md5_to_str(digest);
+			ssl->res[i_res] = md5_to_str(digest);
 		if (ssl->verbose)
-			md5_print(ssl, cur_input, ssl->res);
+			md5_print(ssl, cur_input, ssl->res[i_res]);
 		cur_input = cur_input->next;
+		i_res++;
 	}
+	ssl->res[i_res] = NULL;
 	return (ret);
 }

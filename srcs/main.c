@@ -14,7 +14,7 @@ void		print_error(t_ssl *ssl)
 		ft_printf(SSL_USAGE);
 }
 
-char		*ft_ssl(char **args, int8_t verbose)
+char		**ft_ssl(char **args, int8_t verbose)
 {
 	struct s_ssl	ssl;
 
@@ -49,9 +49,21 @@ char		*ft_ssl(char **args, int8_t verbose)
 	return (NULL);
 }
 
+void		free_res(char **res)
+{
+	uint8_t		i;
+
+	i = 0;
+	while (res[i])
+	{
+		free(res[i]);
+		i++;
+	}
+}
+
 int			main(int ac, char **av)
 {
-	char	*ret;
+	char	**ret;
 
 	ret = ft_ssl(++av, 1);
 	if (!ret)
@@ -60,5 +72,7 @@ int			main(int ac, char **av)
 			ft_printf(SSL_USAGE_EMPTY_ARG);
 		return (1);
 	}
+	else
+		free_res(ret);
 	return (0);
 }

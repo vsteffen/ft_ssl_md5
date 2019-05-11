@@ -74,13 +74,14 @@ typedef struct		s_crypt {
 }					t_crypt;
 
 typedef struct		s_ssl {
-	char			*res;
+	char			**res;
 	int8_t			verbose;
 	char			**args;
 	t_flag			flags_all[SSL_FLAG_NB];
 	t_crypt			crypts[SSL_CRYPT_NB];
 	t_crypt			*crypt;
 	t_input			*inputs;
+	uint8_t			inputs_nb;
 	uint8_t			cur_arg;
 	char			*error;
 	const char		*error_more_1;
