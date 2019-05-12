@@ -7,6 +7,7 @@
 # include <sys/stat.h>
 
 # include "ft_md5.h"
+# include "ft_sha_2.h"
 
 # define SSL_BUFF 2048
 
@@ -110,5 +111,9 @@ void				print_bloc(uint8_t *bloc, size_t size);
 
 void				dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper);
 void				free_array_str(char **res);
+
+uint32_t			swap_uint32(uint32_t val);
+uint64_t			swap_uint64(uint64_t val);
+
 
 #endif
