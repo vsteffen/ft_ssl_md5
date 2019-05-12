@@ -15,19 +15,10 @@ char		*md5_to_str(uint8_t *digest)
 	return (ft_strdup(ret));
 }
 
-void		md5_print_error(t_ssl *ssl)
-{
-	print_error(ssl);
-	ssl->error = NULL;
-	ssl->error_more_1 = NULL;
-	ssl->error_more_2 = NULL;
-	ssl->error_more_3 = NULL;
-}
-
 void		md5_print(t_ssl *ssl, t_input *input, char *digest_str)
 {
 	if (ssl->error)
-		md5_print_error(ssl);
+		print_error_and_reset(ssl);
 	else if (input->is_stdin)
 	{
 		if (ssl->flags_all[SSL_FLAG_P].enable)

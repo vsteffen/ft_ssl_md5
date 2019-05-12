@@ -31,3 +31,27 @@ void			dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper)
 	}
 	fill_zero(length, ptr);
 }
+
+void		free_array_str(char **array)
+{
+	uint8_t		i;
+
+	i = 0;
+	if (!array)
+		return ;
+	while (array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
+void		print_error_and_reset(t_ssl *ssl)
+{
+	print_error(ssl);
+	ssl->error = NULL;
+	ssl->error_more_1 = NULL;
+	ssl->error_more_2 = NULL;
+	ssl->error_more_3 = NULL;
+}

@@ -26,53 +26,28 @@ char		**ft_ssl(char **args, int8_t verbose)
 	if (*args)
 	{
 		if (!parse_args(&ssl, ssl.args) && ssl.verbose)
-		{
 			print_error(&ssl);
-			return (NULL);
-		}
+		if (ssl.crypt)
+			ssl.crypt->func(&ssl);
+		free_inputs(&ssl);
 	}
 	else
 	{
-		if (!handle_shell(&ssl) && ssl.verbose)
-		{
+		if (!handle_shell(&ssl))
 			print_error(&ssl);
-			return (NULL);
-		}
 	}
-	if (ssl.crypt)
-	{
-		// print_inputs(&ssl);
-		ssl.crypt->func(&ssl);
-		free_inputs(&ssl);
-		return (ssl.res);
-	}
-	return (NULL);
-}
-
-void		free_res(char **res)
-{
-	uint8_t		i;
-
-	i = 0;
-	while (res[i])
-	{
-		free(res[i]);
-		i++;
-	}
+	return (ssl.res);
 }
 
 int			main(int ac, char **av)
 {
 	char	**ret;
 
+	(void)ac;
 	ret = ft_ssl(++av, 1);
 	if (!ret)
-	{
-		if (ac == 1)
-			ft_printf(SSL_USAGE_EMPTY_ARG);
 		return (1);
-	}
 	else
-		free_res(ret);
+		free_array_str(ret);
 	return (0);
 }

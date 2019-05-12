@@ -6,8 +6,9 @@
 # include <sys/errno.h>
 # include <sys/stat.h>
 
+# include "ft_md5.h"
+
 # define SSL_BUFF 2048
-# define SSL_BUFF_MD5 64
 
 # define SSL_FLAG_NB 4
 # define SSL_FLAG_MAX_PER_CRYPT 4
@@ -29,21 +30,20 @@
 
 # define SSL_CRYPT_NB 2
 
-# define SSL_USAGE "Standard commands:\n\nMessage Digest commands:\nmd5\nsha256\n\nCipher commands:\n"
-# define SSL_USAGE_EMPTY_ARG "Usage: ft_ssl command [command opts] [command args]\n"
+# define SSL_USAGE_LIST_CMD "Standard commands:\n\nMessage Digest commands:\nmd5\nsha256\n\nCipher commands:\n"
+# define SSL_USAGE_ARG "Usage: ft_ssl command [command opts] [command args]\n"
+# define SSL_USAGE SSL_USAGE_ARG SSL_USAGE_LIST_CMD
+# define SSL_USAGE_ARG_SHELL "Usage: command [command opts] [command args]\n"
+# define SSL_USAGE_SHELL SSL_USAGE_ARG_SHELL SSL_USAGE_LIST_CMD
+
+# define SSL_SHELL_PROMPT "ft_ssl> "
 
 # define SSL_INVALID_ARG "ft_ssl: Error: '%s' is an invalid command.\n"
 # define SSL_INVALID_FLAG "ft_ssl: Error: option '%s' requires an argument\n"
 # define SSL_INVALID_STDIN "ft_ssl: standard input: Bad file descriptor\n"
 # define SSL_INVALID_FILE_ERRNO "ft_ssl: %s: %s\n"
 # define SSL_INVALID_FILE_ISDIR "ft_ssl: %s: Is a directory\n"
-
-typedef struct		s_md5_words {
-	uint32_t		a;
-	uint32_t		b;
-	uint32_t		c;
-	uint32_t		d;
-}					t_md5_words;
+# define SSL_INVALID_SHELL "Invalid command '%s'; type \"help\" for a list.\n"
 
 typedef struct		s_input {
 	char			*data;
@@ -91,8 +91,12 @@ typedef struct		s_ssl {
 }					t_ssl;
 
 int8_t				parse_args(t_ssl *ssl, char **args);
+
 int8_t				handle_shell(t_ssl *ssl);
+int8_t				shell_compare(const char *cmd, const char *input);
+
 void				print_error(t_ssl *ssl);
+void				print_error_and_reset(t_ssl *ssl);
 
 int8_t				fn_arg_s(t_ssl *ssl, void *data);
 
@@ -104,20 +108,7 @@ void				free_inputs(t_ssl *ssl);
 void				print_inputs(t_ssl *ssl);
 void				print_bloc(uint8_t *bloc, size_t size);
 
-int8_t				handle_md5(t_ssl *ssl);
-
-void				md5_rounds(t_md5_words *words, uint8_t *bloc, uint32_t t[65]);
-void				md5_round_1(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
-void				md5_round_2(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
-void				md5_round_3(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
-void				md5_round_4(t_md5_words *w, uint32_t x[16], uint32_t t[65]);
-
-uint32_t			md5_f(uint32_t x, uint32_t y, uint32_t z);
-uint32_t			md5_g(uint32_t x, uint32_t y, uint32_t z);
-uint32_t			md5_h(uint32_t x, uint32_t y, uint32_t z);
-uint32_t			md5_i(uint32_t x, uint32_t y, uint32_t z);
-uint32_t			md5_rotate_left(uint32_t x, int8_t shift);
-
 void				dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper);
+void				free_array_str(char **res);
 
 #endif
