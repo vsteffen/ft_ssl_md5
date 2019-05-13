@@ -19,7 +19,7 @@ char		**ft_ssl(char **args, int8_t verbose)
 	struct s_ssl	ssl;
 
 	ft_bzero(&ssl, sizeof(t_ssl));
-	ft_memcpy(ssl.crypts, (struct s_crypt[]){{"md5", handle_md5, {0, 1, 2, 3}}, {"sha256", handle_sha_2, {0, 1, 2, 3}}}, sizeof(t_crypt) * SSL_CRYPT_NB);
+	ft_memcpy(ssl.crypts, (struct s_crypt[]){{"md5", handle_md5, {0, 1, 2, 3}}, {"sha224", handle_sha_2, {0, 1, 2, 3}}, {"sha256", handle_sha_2, {0, 1, 2, 3}}, {"sha384", handle_sha_2, {0, 1, 2, 3}}, {"sha512", handle_sha_2, {0, 1, 2, 3}}}, sizeof(t_crypt) * SSL_CRYPT_NB);
 	ft_memcpy(ssl.flags_all, (struct s_flag[]){{"-p", 0, 0, NULL, NULL}, {"-q", 0, 0, NULL, NULL}, {"-r", 0, 0, NULL, NULL}, {"-s", 0, 0, NULL, fn_arg_s }}, sizeof(t_flag) * SSL_FLAG_NB);
 	ssl.args = args;
 	ssl.verbose = verbose;

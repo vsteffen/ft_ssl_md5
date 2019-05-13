@@ -50,23 +50,27 @@ typedef struct		s_sha_2_w_64 {
 typedef struct		s_sha_2 {
 	struct s_ssl	*ssl;
 	int8_t			type;
-	int8_t			is_32_w;
 	uint8_t			buff_size;
 	uint8_t			digest_size;
+	uint8_t			hash_length;
+	uint8_t			padding_length;
+	int8_t			padding_first_bit;
 }					t_sha_2;
 
 int8_t				handle_sha_2(struct s_ssl *ssl);
 
-void				sha_2_rounds(t_sha_2_w_32 *words, uint8_t *bloc, uint32_t t[64]);
-void				sha_2_round_1(t_sha_2_w_32 *w, uint32_t x[16], uint32_t t[64]);
-void				sha_2_round_2(t_sha_2_w_32 *w, uint32_t x[16], uint32_t t[64]);
-void				sha_2_round_3(t_sha_2_w_32 *w, uint32_t x[16], uint32_t t[64]);
-void				sha_2_round_4(t_sha_2_w_32 *w, uint32_t x[16], uint32_t t[64]);
+uint32_t			sha_2_ch_32(uint32_t x, uint32_t y, uint32_t z);
+uint32_t			sha_2_maj_32(uint32_t x, uint32_t y, uint32_t z);
+uint32_t			sha_2_sig_up_0_32(uint32_t x);
+uint32_t			sha_2_sig_up_1_32(uint32_t x);
+uint32_t			sha_2_sig_low_0_32(uint32_t x);
+uint32_t			sha_2_sig_low_1_32(uint32_t x);
 
-uint32_t			sha_2_f(uint32_t x, uint32_t y, uint32_t z);
-uint32_t			sha_2_g(uint32_t x, uint32_t y, uint32_t z);
-uint32_t			sha_2_h(uint32_t x, uint32_t y, uint32_t z);
-uint32_t			sha_2_i(uint32_t x, uint32_t y, uint32_t z);
-uint32_t			sha_2_rotate_left(uint32_t x, int8_t shift);
+uint64_t			sha_2_ch_64(uint64_t x, uint64_t y, uint64_t z);
+uint64_t			sha_2_maj_64(uint64_t x, uint64_t y, uint64_t z);
+uint64_t			sha_2_sig_up_0_64(uint64_t x);
+uint64_t			sha_2_sig_up_1_64(uint64_t x);
+uint64_t			sha_2_sig_low_0_64(uint64_t x);
+uint64_t			sha_2_sig_low_1_64(uint64_t x);
 
 #endif

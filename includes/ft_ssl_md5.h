@@ -29,9 +29,9 @@
 **	[3] -> -s, print the sum of the given string
 */
 
-# define SSL_CRYPT_NB 2
+# define SSL_CRYPT_NB 5
 
-# define SSL_USAGE_LIST_CMD "Standard commands:\n\nMessage Digest commands:\nmd5\nsha256\n\nCipher commands:\n"
+# define SSL_USAGE_LIST_CMD "Standard commands:\n\nMessage Digest commands:\nmd5\t\tsha224\t\tsha256\t\tsha384\t\tsha512\n\nCipher commands:\n"
 # define SSL_USAGE_ARG "Usage: ft_ssl command [command opts] [command args]\n"
 # define SSL_USAGE SSL_USAGE_ARG SSL_USAGE_LIST_CMD
 # define SSL_USAGE_ARG_SHELL "Usage: command [command opts] [command args]\n"
@@ -114,6 +114,9 @@ void				free_array_str(char **res);
 
 uint32_t			swap_uint32(uint32_t val);
 uint64_t			swap_uint64(uint64_t val);
-
+uint32_t			rot_r_32(uint32_t x, int8_t n);
+uint64_t			rot_r_64(uint64_t x, int8_t n);
+uint32_t			shift_r_32(uint32_t x, int8_t n);
+uint64_t			shift_r_64(uint64_t x, int8_t n);
 
 #endif
