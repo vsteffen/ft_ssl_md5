@@ -73,4 +73,10 @@ uint64_t			sha_2_sig_up_1_64(uint64_t x);
 uint64_t			sha_2_sig_low_0_64(uint64_t x);
 uint64_t			sha_2_sig_low_1_64(uint64_t x);
 
+void				sha_2_fill_msg_schedule_32(uint32_t sch[64], uint8_t *bloc);
+void				sha_2_fill_msg_schedule_64(uint64_t sch[80], uint8_t *bloc);
+
+void				sha_2_rounds_32(t_sha_2_w_32 *w, uint8_t *bloc, uint32_t t[65]);
+void				sha_2_rounds_64(t_sha_2_w_64 *w, uint8_t *bloc, uint64_t t[65]);
+
 #endif

@@ -45,17 +45,10 @@ void		md5_print(t_ssl *ssl, t_input *input, char *digest_str)
 
 void		md5_update(uint8_t *bloc, uint8_t *digest, uint32_t t[65])
 {
-	t_md5_words		words;
+	t_md5_words		*words;
 
-	words.a = *(uint32_t *)(digest + 0);
-	words.b = *(uint32_t *)(digest + 4);
-	words.c = *(uint32_t *)(digest + 8);
-	words.d = *(uint32_t *)(digest + 12);
-	md5_rounds(&words, bloc, t);
-	*(uint32_t *)(digest + 0) = words.a;
-	*(uint32_t *)(digest + 4) = words.b;
-	*(uint32_t *)(digest + 8) = words.c;
-	*(uint32_t *)(digest + 12) = words.d;
+	words = (t_md5_words *)digest;
+	md5_rounds(words, bloc, t);
 }
 
 void		md5_padding_file(uint8_t *bloc, int16_t len_left, int8_t *padding_first_bit)
@@ -123,7 +116,7 @@ int8_t		handle_md5_file(t_ssl *ssl, t_input *input, uint8_t *digest, uint32_t t[
 {
 	int		fd;
 	uint8_t	buff[SSL_BUFF_MD5];
-	ssize_t	ret_read;
+	uint8_t	ret_read;
 	int8_t	padding_first_bit;
 
 	if ((fd = md5_open_file(ssl, input)) == -1)
@@ -132,24 +125,26 @@ int8_t		handle_md5_file(t_ssl *ssl, t_input *input, uint8_t *digest, uint32_t t[
 	while ((ret_read = read(fd, buff, SSL_BUFF_MD5)) > 0)
 	{
 		input->len += ret_read;
-		if (ret_read < 56)
+		if (ret_read < 64)
 		{
 			md5_padding_file(buff, ret_read, &padding_first_bit);
-			md5_padding_length(buff, input->len);
+			if (ret_read < 56)
+				md5_padding_length(buff, input->len);
+			else
+				padding_first_bit = 2;
 			md5_update(buff, digest, t);
-		}
-		else if (ret_read < 64)
-		{
-			md5_padding_file(buff, ret_read, &padding_first_bit);
-			md5_update(buff, digest, t);
-			md5_padding_file(buff, 0, &padding_first_bit);
-			md5_padding_length(buff, input->len);
-			md5_update(buff, digest, t);
+			break ;
 		}
 		else
 			md5_update(buff, digest, t);
 	}
-	if (ret_read == (ssize_t)-1)
+	if (padding_first_bit == 0 || padding_first_bit == 2)
+	{
+		md5_padding_file(buff, 0, &padding_first_bit);
+		md5_padding_length(buff, input->len);
+		md5_update(buff, digest, t);	
+	}
+	if (ret_read == (uint8_t)-1)
 	{
 		ssl->error_no_usage = 1;
 		ssl->error = SSL_INVALID_FILE_ERRNO;

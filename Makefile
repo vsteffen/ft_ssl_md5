@@ -51,6 +51,8 @@ SRC =	main.c \
 		sha_2.c \
 		sha_2_auxiliaries_32.c \
 		sha_2_auxiliaries_64.c \
+		sha_2_rounds_32.c \
+		sha_2_rounds_64.c \
 		fn_flags.c
 
 PRE_CHECK_SUB_LIBFT	:= $(LIBFT)/Makefile

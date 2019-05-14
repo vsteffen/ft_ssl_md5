@@ -45,14 +45,36 @@ void		sha_2_print(t_ssl *ssl, t_input *input, char *digest_str)
 	}
 }
 
-void		sha_2_update(t_sha_2 *sha_2, uint8_t *bloc, uint8_t *digest, uint64_t t[65])
+void		sha_2_update_32(t_sha_2 *sha_2, uint8_t *bloc, uint32_t *digest, uint32_t t[64])
 {
-	// t_sha_2_words		words;
-	print_bloc(bloc, sha_2->buff_size);
+	t_sha_2_w_32		*w;
+
+	w = (t_sha_2_w_32 *)digest;
+	sha_2_rounds_32(w, bloc, t);
+	(void)sha_2;
+	(void)digest;
+}
+
+void		sha_2_update_64(t_sha_2 *sha_2, uint8_t *bloc, uint64_t *digest, uint64_t t[64])
+{
+	t_sha_2_w_64		*w;
+
+	w = (t_sha_2_w_64 *)digest;
+	sha_2_rounds_64(w, bloc, t);
 	(void)sha_2;
 	(void)bloc;
 	(void)digest;
 	(void)t;
+	(void)w;
+}
+
+void		sha_2_update(t_sha_2 *sha_2, uint8_t *bloc, uint64_t *digest, uint64_t t[64])
+{
+
+	if (sha_2->type < 2)
+		sha_2_update_32(sha_2, bloc, (uint32_t *)digest, (uint32_t *)t);
+	else
+		sha_2_update_64(sha_2, bloc, digest, t);
 	// words.a = *(uint32_t *)(digest + 0);
 	// words.b = *(uint32_t *)(digest + 4);
 	// words.c = *(uint32_t *)(digest + 8);
@@ -125,35 +147,58 @@ int			sha_2_open_file(t_ssl *ssl, t_input *input)
 	return (fd);
 }
 
-int8_t		handle_sha_2_file(t_sha_2 *sha_2, t_input *input, uint8_t *digest, uint64_t t[65])
+int8_t		handle_sha_2_file(t_sha_2 *sha_2, t_input *input, uint64_t *digest, uint64_t t[64])
 {
 	int		fd;
 	uint8_t	buff[sha_2->buff_size];
-	ssize_t	ret_read;
+	uint8_t	ret_read;
 
 	if ((fd = sha_2_open_file(sha_2->ssl, input)) == -1)
 		return (0);
+
+	// while ((ret_read = read(fd, buff, sha_2->buff_size)) > 0)
+	// {
+	// 	input->len += ret_read;
+	// 	if (ret_read < (sha_2->buff_size - sha_2->padding_length))
+	// 	{
+	// 		sha_2_padding_file(buff, ret_read, sha_2);
+	// 		sha_2_padding_length(buff, input->len, sha_2);
+	// 		sha_2_update(sha_2, buff, digest, t);
+	// 	}
+	// 	else if (ret_read < sha_2->buff_size)
+	// 	{
+	// 		sha_2_padding_file(buff, ret_read, sha_2);
+	// 		sha_2_update(sha_2, buff, digest, t);
+	// 		sha_2_padding_file(buff, 0, sha_2);
+	// 		sha_2_padding_length(buff, input->len, sha_2);
+	// 		sha_2_update(sha_2, buff, digest, t);
+	// 	}
+	// 	else
+	// 		sha_2_update(sha_2, buff, digest, t);
+	// }
 	while ((ret_read = read(fd, buff, sha_2->buff_size)) > 0)
 	{
 		input->len += ret_read;
-		if (ret_read < (sha_2->buff_size - sha_2->padding_length))
+		if (ret_read < sha_2->buff_size)
 		{
 			sha_2_padding_file(buff, ret_read, sha_2);
-			sha_2_padding_length(buff, input->len, sha_2);
+			if (ret_read < (sha_2->buff_size - sha_2->padding_length))
+				sha_2_padding_length(buff, input->len, sha_2);
+			else
+				sha_2->padding_first_bit = 2;
 			sha_2_update(sha_2, buff, digest, t);
-		}
-		else if (ret_read < sha_2->buff_size)
-		{
-			sha_2_padding_file(buff, ret_read, sha_2);
-			sha_2_update(sha_2, buff, digest, t);
-			sha_2_padding_file(buff, 0, sha_2);
-			sha_2_padding_length(buff, input->len, sha_2);
-			sha_2_update(sha_2, buff, digest, t);
+			break ;
 		}
 		else
 			sha_2_update(sha_2, buff, digest, t);
 	}
-	if (ret_read == (ssize_t)-1)
+	if (sha_2->padding_first_bit == 0 || sha_2->padding_first_bit == 2)
+	{
+		sha_2_padding_file(buff, 0, sha_2);
+		sha_2_padding_length(buff, input->len, sha_2);
+		sha_2_update(sha_2, buff, digest, t);	
+	}
+	if (ret_read == (uint8_t)-1)
 	{
 		sha_2->ssl->error_no_usage = 1;
 		sha_2->ssl->error = SSL_INVALID_FILE_ERRNO;
@@ -165,7 +210,7 @@ int8_t		handle_sha_2_file(t_sha_2 *sha_2, t_input *input, uint8_t *digest, uint6
 	return (1);
 }
 
-int8_t		handle_sha_2_raw(t_sha_2 *sha_2, t_input *input, uint8_t *digest, uint64_t t[65])
+int8_t		handle_sha_2_raw(t_sha_2 *sha_2, t_input *input, uint64_t *digest, uint64_t t[64])
 {
 	uint8_t	bloc_padded[sha_2->buff_size];
 	size_t	data_read;
@@ -226,22 +271,22 @@ void		sha_2_init_struct(t_sha_2 *sha_2, t_ssl *ssl)
 void		sha_2_init_digest(t_sha_2 *sha_2, uint64_t *digest)
 {
 	if (sha_2->type == 0)
-		ft_memcpy(digest, (unsigned long[]){0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939, 0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4}, 8);
+		ft_memcpy(digest, (unsigned int[]){0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939, 0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4}, sizeof(uint32_t) * 8);
 	else if (sha_2->type == 1)
-		ft_memcpy(digest, (unsigned long[]){0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19}, 8);
+		ft_memcpy(digest, (unsigned int[]){0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19}, sizeof(uint32_t) * 8);
 	else if (sha_2->type == 2)
 		ft_memcpy(digest, (unsigned long long[]){0xcbbb9d5dc1059ed8, 0x629a292a367cd507, 0x9159015a3070dd17, 0x152fecd8f70e5939,
-			0x67332667ffc00b31, 0x8eb44a8768581511, 0xdb0c2e0d64f98fa7, 0x47b5481dbefa4fa4}, 8);
+			0x67332667ffc00b31, 0x8eb44a8768581511, 0xdb0c2e0d64f98fa7, 0x47b5481dbefa4fa4}, sizeof(uint64_t) * 8);
 	else
 		ft_memcpy(digest, (unsigned long long[]){0x6a09e667f3bcc908, 0xbb67ae8584caa73b, 0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
-			0x510e527fade682d1, 0x9b05688c2b3e6c1f, 0x1f83d9abfb41bd6b, 0x5be0cd19137e2179}, 8);
+			0x510e527fade682d1, 0x9b05688c2b3e6c1f, 0x1f83d9abfb41bd6b, 0x5be0cd19137e2179}, sizeof(uint64_t) * 8);
 }
 
 void		sha_2_init_t(t_sha_2 *sha_2, uint64_t *t)
 {
 	if (sha_2->type < 2)
 	{
-		ft_memcpy(t, (unsigned long[]){
+		ft_memcpy(t, (unsigned int[]){
 			0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
 			0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
 			0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
@@ -308,9 +353,9 @@ int8_t		handle_sha_2(t_ssl *ssl)
 	{
 		sha_2_init_digest(&sha_2, digest);
 		if (cur_input->filename)
-			ret_tmp = handle_sha_2_file(&sha_2, cur_input, (uint8_t *)digest, t);
+			ret_tmp = handle_sha_2_file(&sha_2, cur_input, digest, t);
 		else
-			ret_tmp = handle_sha_2_raw(&sha_2, cur_input, (uint8_t *)digest, t);
+			ret_tmp = handle_sha_2_raw(&sha_2, cur_input, digest, t);
 		if (!ret_tmp)
 		{
 			ret = 0;
