@@ -1,6 +1,6 @@
 #include "ft_ssl_md5.h"
 
-t_input		*create_input(void *data, char *filename, size_t len, int8_t is_stdin)
+t_input		*create_input(char *data, char *filename, size_t len, int8_t is_stdin)
 {
 	t_input	*new;
 

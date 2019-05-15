@@ -101,7 +101,7 @@ void				print_error_and_reset(t_ssl *ssl);
 
 int8_t				fn_arg_s(t_ssl *ssl, void *data);
 
-t_input				*create_input(void *data, char *filename, size_t len, int8_t is_stdin);
+t_input				*create_input(char *data, char *filename, size_t len, int8_t is_stdin);
 void				add_input(t_ssl *ssl, t_input *new_input);
 void				add_input_first(t_ssl *ssl, t_input *new_input);
 void				free_inputs(t_ssl *ssl);
@@ -114,6 +114,8 @@ void				free_array_str(char **res);
 
 uint32_t			swap_uint32(uint32_t val);
 uint64_t			swap_uint64(uint64_t val);
+void				reverse_endian_array_32(uint32_t *array, size_t length);
+void				reverse_endian_array_64(uint64_t *array, size_t length);
 uint32_t			rot_r_32(uint32_t x, int8_t n);
 uint64_t			rot_r_64(uint64_t x, int8_t n);
 uint32_t			shift_r_32(uint32_t x, int8_t n);

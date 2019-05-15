@@ -75,26 +75,8 @@ t_crypt	*search_crypt(t_ssl *ssl, const char *name_given)
 
 int8_t	get_inputs_in_stdin(t_ssl *ssl)
 {
-	char	stdin_buff[SSL_BUFF + 1];
-	char	*data;
-	size_t	len;
-	int		ret;
-
-	data = ft_strdup("");
-	len = 0;
-	while ((ret = read(0, stdin_buff, SSL_BUFF)) > 0)
-	{
-		stdin_buff[ret] = '\0';
-		data = ft_strjoinaf1(data, stdin_buff);
-		len += ret;
-	}
-	if (ret == -1)
-	{
-		ssl->error = SSL_INVALID_STDIN;
-		ssl->error_no_usage = 1;
-		return (0);
-	}
-	add_input_first(ssl, create_input(data, NULL, len, 1));
+	add_input_first(ssl, create_input(NULL, "stdin", 0, 1));
+	ssl->inputs->fd = 0;
 	return (1);
 }
 

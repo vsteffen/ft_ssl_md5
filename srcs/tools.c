@@ -64,14 +64,14 @@ uint32_t	swap_uint32(uint32_t val)
 
 uint64_t	swap_uint64(uint64_t val)
 {
-    val = ((val << 8) & 0xFF00FF00FF00FF00ULL ) | ((val >> 8) & 0x00FF00FF00FF00FFULL );
-    val = ((val << 16) & 0xFFFF0000FFFF0000ULL ) | ((val >> 16) & 0x0000FFFF0000FFFFULL );
+    val = ((val << 8) & 0xFF00FF00FF00FF00ULL) | ((val >> 8) & 0x00FF00FF00FF00FFULL);
+    val = ((val << 16) & 0xFFFF0000FFFF0000ULL) | ((val >> 16) & 0x0000FFFF0000FFFFULL);
     return ((val << 32) | (val >> 32));
 }
 
 uint32_t	rot_r_32(uint32_t x, int8_t n)
 {
-	return (((x) << (n)) | ((x) >> (32 - (n))));
+	return (((x) >> (n)) | ((x) << (32 - (n))));
 }
 
 uint32_t	shift_r_32(uint32_t x, int8_t n)
@@ -81,10 +81,38 @@ uint32_t	shift_r_32(uint32_t x, int8_t n)
 
 uint64_t	rot_r_64(uint64_t x, int8_t n)
 {
-	return (((x) << (n)) | ((x) >> (64 - (n))));
+	return (((x) >> (n)) | ((x) << (64 - (n))));
 }
 
 uint64_t	shift_r_64(uint64_t x, int8_t n)
 {
 	return (x >> n);
 }
+
+void		reverse_endian_array_32(uint32_t *array, size_t length)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < length)
+	{
+		array[i] = swap_uint32(array[i]);
+		i++;
+	}
+}
+
+void		reverse_endian_array_64(uint64_t *array, size_t length)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < length)
+	{
+		array[i] = swap_uint64(array[i]);
+		i++;
+	}
+}
+
+
+
+
