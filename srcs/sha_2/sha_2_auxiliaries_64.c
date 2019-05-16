@@ -22,10 +22,10 @@ uint64_t	sha_2_sig_up_1_64(uint64_t x)
 
 uint64_t	sha_2_sig_low_0_64(uint64_t x)
 {
-	return (rot_r_64(x, 1) ^ rot_r_64(x, 8) ^ shift_r_64(x, 7));
+	return (rot_r_64(x, 1) ^ rot_r_64(x, 8) ^ (x >> 7));
 }
 
 uint64_t	sha_2_sig_low_1_64(uint64_t x)
 {
-	return (rot_r_64(x, 19) ^ rot_r_64(x, 61) ^ shift_r_64(x, 6));
+	return (rot_r_64(x, 19) ^ rot_r_64(x, 61) ^ (x >> 6));
 }

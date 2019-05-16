@@ -74,19 +74,9 @@ uint32_t	rot_r_32(uint32_t x, int8_t n)
 	return (((x) >> (n)) | ((x) << (32 - (n))));
 }
 
-uint32_t	shift_r_32(uint32_t x, int8_t n)
-{
-	return (x >> n);
-}
-
 uint64_t	rot_r_64(uint64_t x, int8_t n)
 {
 	return (((x) >> (n)) | ((x) << (64 - (n))));
-}
-
-uint64_t	shift_r_64(uint64_t x, int8_t n)
-{
-	return (x >> n);
 }
 
 void		reverse_endian_array_32(uint32_t *array, size_t length)

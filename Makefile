@@ -39,20 +39,23 @@ CPATH 	=	$(ROOT)/srcs
 LPATH	=	$(LIBFT)/libft.a
 HPATH 	=	-I $(ROOT)/includes -I $(LIBFT)/includes
 
+SHA_2	=	/sha_2
+MD5		=	/md5
+
 SRC =	main.c \
 		parsing.c \
 		shell.c \
 		tools.c \
 		tools_inputs.c \
 		debug.c \
-		md5.c \
-		md5_auxiliaries.c \
-		md5_rounds.c \
-		sha_2.c \
-		sha_2_auxiliaries_32.c \
-		sha_2_auxiliaries_64.c \
-		sha_2_rounds_32.c \
-		sha_2_rounds_64.c \
+		$(MD5)/md5.c \
+		$(MD5)/md5_auxiliaries.c \
+		$(MD5)/md5_compute.c \
+		$(SHA_2)/sha_2.c \
+		$(SHA_2)/sha_2_auxiliaries_32.c \
+		$(SHA_2)/sha_2_auxiliaries_64.c \
+		$(SHA_2)/sha_2_compute_32.c \
+		$(SHA_2)/sha_2_compute_64.c \
 		fn_flags.c
 
 PRE_CHECK_SUB_LIBFT	:= $(LIBFT)/Makefile
@@ -133,7 +136,7 @@ $(OPATH)/%.o: $(CPATH)/%.c | $(PRE_CHECK_LIB)
 
 $(OPATH):
 	echo $(PROJECT)": Creation of objects directory"
-	$(MKDIR) $@
+	$(MKDIR) $@ $@$(MD5) $@$(SHA_2)
 
 clean:
 	$(RM) -Rf $(OPATH)

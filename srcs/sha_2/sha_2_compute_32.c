@@ -17,7 +17,7 @@ void		sha_2_fill_msg_schedule_32(uint32_t sch[64], uint8_t *bloc)
 	}
 }
 
-void	sha_2_rounds_32(t_sha_2_w_32 *h, uint8_t *bloc, uint32_t k[64])
+void	sha_2_compute_32(t_sha_2_w_32 *h, uint8_t *bloc, uint32_t k[64])
 {
 	t_sha_2_w_32	w_tmp;
 	uint32_t		sch[64];

@@ -22,10 +22,10 @@ uint32_t	sha_2_sig_up_1_32(uint32_t x)
 
 uint32_t	sha_2_sig_low_0_32(uint32_t x)
 {
-	return (rot_r_32(x, 7) ^ rot_r_32(x, 18) ^ shift_r_32(x, 3));
+	return (rot_r_32(x, 7) ^ rot_r_32(x, 18) ^ (x >> 3));
 }
 
 uint32_t	sha_2_sig_low_1_32(uint32_t x)
 {
-	return (rot_r_32(x, 17) ^ rot_r_32(x, 19) ^ shift_r_32(x, 10));
+	return (rot_r_32(x, 17) ^ rot_r_32(x, 19) ^ (x >> 10));
 }

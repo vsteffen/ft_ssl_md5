@@ -14,9 +14,6 @@
 # define SSL_FLAG_NB 4
 # define SSL_FLAG_MAX_PER_CRYPT 4
 
-/*
-**	FLAGS TAB
-*/
 # define SSL_FLAG_P 0
 # define SSL_FLAG_Q 1
 # define SSL_FLAG_R 2
@@ -118,7 +115,5 @@ void				reverse_endian_array_32(uint32_t *array, size_t length);
 void				reverse_endian_array_64(uint64_t *array, size_t length);
 uint32_t			rot_r_32(uint32_t x, int8_t n);
 uint64_t			rot_r_64(uint64_t x, int8_t n);
-uint32_t			shift_r_32(uint32_t x, int8_t n);
-uint64_t			shift_r_64(uint64_t x, int8_t n);
 
 #endif

@@ -48,7 +48,7 @@ void		md5_update(uint8_t *bloc, uint8_t *digest, uint32_t t[65])
 	t_md5_words		*words;
 
 	words = (t_md5_words *)digest;
-	md5_rounds(words, bloc, t);
+	md5_compute(words, bloc, t);
 }
 
 void		md5_padding_file(uint8_t *bloc, int16_t len_left, int8_t *padding_first_bit)

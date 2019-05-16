@@ -1,6 +1,6 @@
 #include "ft_ssl_md5.h"
 
-void	md5_rounds(t_md5_words *words, uint8_t *bloc, uint32_t t[65])
+void	md5_compute(t_md5_words *words, uint8_t *bloc, uint32_t t[65])
 {
 	t_md5_words		tmp;
 	uint32_t		x[16];
