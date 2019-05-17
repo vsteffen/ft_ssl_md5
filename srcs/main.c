@@ -43,8 +43,9 @@ int			main(int ac, char **av)
 {
 	char	**ret;
 
-	(void)ac;
 	ret = ft_ssl(++av, 1);
+	if (ac == 1)
+		return (0);
 	if (!ret)
 		return (1);
 	else

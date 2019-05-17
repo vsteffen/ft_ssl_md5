@@ -22,7 +22,7 @@ void		md5_print(t_ssl *ssl, t_input *input, char *digest_str)
 	else if (input->is_stdin)
 	{
 		if (ssl->flags_all[SSL_FLAG_P].enable)
-			ft_printf("%s", (char *)input->data);
+			write(1, input->data, input->len);
 		ft_printf("%s\n", digest_str);
 	}
 	else if (ssl->flags_all[SSL_FLAG_Q].enable)
@@ -90,8 +90,6 @@ int			md5_open_file(t_ssl *ssl, t_input *input)
 	int				fd;
 	struct stat		st;
 
-	if (input->fd >= 0)
-		return (input->fd);
 	if (stat(input->filename, &st) == -1)
 	{
 		ssl->error = SSL_INVALID_FILE_ERRNO;
@@ -126,6 +124,8 @@ int8_t		handle_md5_file(t_ssl *ssl, t_input *input, uint8_t *digest, uint32_t t[
 	padding_first_bit = 0;
 	while ((ret_read = read(fd, buff, SSL_BUFF_MD5)) > 0 && ret_read != (uint8_t)-1)
 	{
+		if (input->is_stdin && ssl->flags_all[SSL_FLAG_P].enable)
+			write(1, buff, ret_read);
 		input->len += ret_read;
 		if (ret_read < 64)
 		{
@@ -167,18 +167,15 @@ int8_t		handle_md5_raw(t_ssl *ssl, t_input *input, uint8_t *digest, uint32_t t[6
 	(void)ssl;
 	data_read = 0;
 	padding_first_bit = 0;
-	ft_printf("IN Raw [%p]\n", input->data);
 	while (data_read + 56 <= input->len)
 	{
 		if ((input->len - data_read) < 64)
 		{
-			ft_printf("PASS HERE LULZ\n");
 			md5_padding_raw(bloc_padded, (uint8_t *)(input->data + data_read), input->len - data_read, &padding_first_bit);
 			md5_update(bloc_padded, digest, t);
 			data_read = input->len;
 			break ;
 		}
-		ft_printf("PASS HERE [%lu]\n", data_read);
 		md5_update((uint8_t *)(input->data + data_read), digest, t);
 		data_read += 64;
 	}
@@ -223,7 +220,7 @@ int8_t		handle_md5(t_ssl *ssl)
 	while (cur_input)
 	{
 		ft_memcpy(digest, (uint8_t[]){0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10}, 16);
-		if (cur_input->filename || cur_input->fd >= 0)
+		if (cur_input->filename)
 			ret_tmp = handle_md5_file(ssl, cur_input, digest, t);
 		else
 			ret_tmp = handle_md5_raw(ssl, cur_input, digest, t);

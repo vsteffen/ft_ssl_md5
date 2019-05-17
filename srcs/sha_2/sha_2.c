@@ -28,7 +28,7 @@ void		sha_2_print(t_ssl *ssl, t_input *input, char *digest_str)
 	else if (input->is_stdin)
 	{
 		if (ssl->flags_all[SSL_FLAG_P].enable)
-			ft_printf("%s", (char *)input->data);
+			write(1, input->data, input->len);
 		ft_printf("%s\n", digest_str);
 	}
 	else if (ssl->flags_all[SSL_FLAG_Q].enable)
@@ -114,8 +114,6 @@ int			sha_2_open_file(t_ssl *ssl, t_input *input)
 	int				fd;
 	struct stat		st;
 
-	if (input->fd >= 0)
-		return (input->fd);
 	if (stat(input->filename, &st) == -1)
 	{
 		ssl->error = SSL_INVALID_FILE_ERRNO;
@@ -146,8 +144,11 @@ int8_t		handle_sha_2_file(t_sha_2 *sha_2, t_input *input, uint64_t *digest, uint
 
 	if ((fd = sha_2_open_file(sha_2->ssl, input)) == -1)
 		return (0);
+	sha_2->padding_first_bit = 0;
 	while ((ret_read = read(fd, buff, sha_2->buff_size)) > 0 && ret_read != (uint8_t)-1)
 	{
+		if (input->is_stdin && sha_2->ssl->flags_all[SSL_FLAG_P].enable)
+			write(1, buff, ret_read);
 		input->len += ret_read;
 		if (ret_read < sha_2->buff_size)
 		{
@@ -186,6 +187,7 @@ int8_t		handle_sha_2_raw(t_sha_2 *sha_2, t_input *input, uint64_t *digest, uint6
 	size_t	data_read;
 
 	data_read = 0;
+	sha_2->padding_first_bit = 0;
 	while (data_read + (sha_2->buff_size - sha_2->padding_length) <= input->len)
 	{
 		if ((input->len - data_read) < sha_2->buff_size)
@@ -235,7 +237,6 @@ void		sha_2_init_struct(t_sha_2 *sha_2, t_ssl *ssl)
 		sha_2->digest_size = SSL_DIGEST_SHA_512;
 		sha_2->padding_length = SSL_PADDING_LENGTH_SHA_64;
 	}
-	sha_2->padding_first_bit = 0;
 }
 
 void		sha_2_init_digest(t_sha_2 *sha_2, uint64_t *digest)
@@ -322,7 +323,7 @@ int8_t		handle_sha_2(t_ssl *ssl)
 	while (cur_input)
 	{
 		sha_2_init_digest(&sha_2, digest);
-		if (cur_input->filename || cur_input->fd >= 0)
+		if (cur_input->filename)
 			ret_tmp = handle_sha_2_file(&sha_2, cur_input, digest, k);
 		else
 			ret_tmp = handle_sha_2_raw(&sha_2, cur_input, digest, k);
