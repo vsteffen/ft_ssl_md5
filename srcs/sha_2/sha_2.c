@@ -121,40 +121,13 @@ void		sha_2_padding_length(uint8_t *bloc, size_t total_len, t_sha_2 *sha_2)
 	*(uint64_t *)(bloc + (sha_2->buff_size - 8)) = swap_uint64((uint64_t)total_len << 3);
 }
 
-int			sha_2_open_file(t_ssl *ssl, t_ssl_in *input)
-{
-	int				fd;
-	struct stat		st;
-
-	if (stat(input->filename, &st) == -1)
-	{
-		ssl->error = SSL_INVALID_FILE_ERRNO;
-		ssl->error_more_1 = input->filename;
-		ssl->error_more_2 = strerror(errno);
-		return (-1);
-	}
-	if (S_ISDIR(st.st_mode))
-	{
-		ssl->error = SSL_INVALID_FILE_ISDIR;
-		ssl->error_more_1 = input->filename;
-		return (-1);
-	}
-	if ((fd = open(input->filename, O_RDWR)) == -1)
-	{
-		ssl->error = SSL_INVALID_FILE_ERRNO;
-		ssl->error_more_1 = input->filename;
-		ssl->error_more_2 = strerror(errno);
-	}
-	return (fd);
-}
-
 int8_t		handle_sha_2_file(t_sha_2 *sha_2, t_ssl_in *input, uint64_t *digest, uint64_t *k)
 {
 	int		fd;
 	uint8_t	buff[sha_2->buff_size];
 	uint8_t	ret_read;
 
-	if ((fd = sha_2_open_file(sha_2->ssl, input)) == -1)
+	if ((fd = ssl_open_file(sha_2->ssl, input)) == -1)
 		return (0);
 	sha_2->padding_first_bit = 0;
 	while ((ret_read = read(fd, buff, sha_2->buff_size)) > 0 && ret_read != (uint8_t)-1)

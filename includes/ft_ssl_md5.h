@@ -99,7 +99,7 @@ void				print_error_and_reset(t_ssl *ssl);
 
 int8_t				fn_arg_s(t_ssl *ssl, void *data);
 
-t_ssl_in				*create_input(char *data, char *filename, size_t len, int8_t is_stdin);
+t_ssl_in			*create_input(char *data, char *filename, size_t len, int8_t is_stdin);
 void				add_input(t_ssl *ssl, t_ssl_in *new_input);
 void				add_input_first(t_ssl *ssl, t_ssl_in *new_input);
 void				free_inputs(t_ssl *ssl);
@@ -109,6 +109,7 @@ void				print_bloc(uint8_t *bloc, size_t size);
 
 void				dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper);
 void				free_array_str(char **res);
+int					ssl_open_file(t_ssl *ssl, t_ssl_in *input);
 
 uint32_t			swap_uint32(uint32_t val);
 uint64_t			swap_uint64(uint64_t val);

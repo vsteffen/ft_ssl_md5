@@ -52,6 +52,8 @@ SRC =	main.c \
 		tools_inputs.c \
 		debug.c \
 		$(MD5)/md5.c \
+		$(MD5)/md5_read_input.c \
+		$(MD5)/md5_read_input_2.c \
 		$(MD5)/md5_auxiliaries.c \
 		$(MD5)/md5_compute.c \
 		$(SHA_2)/sha_2.c \

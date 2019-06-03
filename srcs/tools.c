@@ -68,3 +68,30 @@ void		print_error_and_reset(t_ssl *ssl)
 	ssl->error_more_2 = NULL;
 	ssl->error_more_3 = NULL;
 }
+
+int			ssl_open_file(t_ssl *ssl, t_ssl_in *input)
+{
+	int				fd;
+	struct stat		st;
+
+	if (stat(input->filename, &st) == -1)
+	{
+		ssl->error = SSL_INVALID_FILE_ERRNO;
+		ssl->error_more_1 = input->filename;
+		ssl->error_more_2 = strerror(errno);
+		return (-1);
+	}
+	if (S_ISDIR(st.st_mode))
+	{
+		ssl->error = SSL_INVALID_FILE_ISDIR;
+		ssl->error_more_1 = input->filename;
+		return (-1);
+	}
+	if ((fd = open(input->filename, O_RDWR)) == -1)
+	{
+		ssl->error = SSL_INVALID_FILE_ERRNO;
+		ssl->error_more_1 = input->filename;
+		ssl->error_more_2 = strerror(errno);
+	}
+	return (fd);
+}
