@@ -57,8 +57,13 @@ SRC =	main.c \
 		$(MD5)/md5_auxiliaries.c \
 		$(MD5)/md5_compute.c \
 		$(SHA_2)/sha_2.c \
+		$(SHA_2)/sha_2_init.c \
+		$(SHA_2)/sha_2_read_input.c \
+		$(SHA_2)/sha_2_update.c \
 		$(SHA_2)/sha_2_auxiliaries_32.c \
+		$(SHA_2)/sha_2_auxiliaries_32_2.c \
 		$(SHA_2)/sha_2_auxiliaries_64.c \
+		$(SHA_2)/sha_2_auxiliaries_64_2.c \
 		$(SHA_2)/sha_2_compute_32.c \
 		$(SHA_2)/sha_2_compute_64.c \
 		fn_flags.c

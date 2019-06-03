@@ -12,7 +12,7 @@
 
 #include "ft_ssl_md5.h"
 
-int8_t	flag_detected(t_ssl *ssl, char *flag_name)
+int8_t		flag_detected(t_ssl *ssl, char *flag_name)
 {
 	int8_t		i;
 
@@ -25,7 +25,7 @@ int8_t	flag_detected(t_ssl *ssl, char *flag_name)
 	return (-1);
 }
 
-int8_t	add_flag(t_ssl *ssl, int8_t flag_i)
+int8_t		add_flag(t_ssl *ssl, int8_t flag_i)
 {
 	int8_t	i;
 
@@ -49,7 +49,7 @@ int8_t	add_flag(t_ssl *ssl, int8_t flag_i)
 	return (0);
 }
 
-int8_t	detect_and_handle_arg(t_ssl *ssl, char *arg, int8_t *must_be_file)
+int8_t		detect_and_handle_arg(t_ssl *ssl, char *arg, int8_t *must_be_file)
 {
 	int8_t	ret_flag;
 
@@ -85,7 +85,7 @@ t_ssl_crypt	*search_crypt(t_ssl *ssl, const char *name_given)
 	return (NULL);
 }
 
-int8_t	parse_args(t_ssl *ssl, char **args)
+int8_t		parse_args(t_ssl *ssl, char **args)
 {
 	int8_t	must_be_file;
 

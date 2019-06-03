@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_ssl_md5.h                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vsteffen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/03 21:53:30 by vsteffen          #+#    #+#             */
+/*   Updated: 2019/06/03 21:53:31 by vsteffen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef FT_SSL_MD5_H
 # define FT_SSL_MD5_H
 
@@ -27,8 +39,12 @@
 */
 
 # define SSL_CRYPT_NB 5
-
-# define SSL_USAGE_LIST_CMD "Standard commands:\n\nMessage Digest commands:\nmd5\t\tsha224\t\tsha256\t\tsha384\t\tsha512\n\nCipher commands:\n"
+# define SSL_USAGE_COMMAND "Standard commands:\n\n"
+# define SSL_USAGE_DIGEST_1 "Message Digest commands:\n"
+# define SSL_USAGE_DIGEST_2 "md5\t\tsha224\t\tsha256\t\tsha384\t\tsha512\n\n"
+# define SSL_USAGE_DIGEST SSL_USAGE_DIGEST_1 SSL_USAGE_DIGEST_2
+# define SSL_USAGE_CYPHER "Cipher commands:\n"
+# define SSL_USAGE_LIST_CMD SSL_USAGE_COMMAND SSL_USAGE_DIGEST SSL_USAGE_CYPHER
 # define SSL_USAGE_ARG "Usage: ft_ssl command [command opts] [command args]\n"
 # define SSL_USAGE SSL_USAGE_ARG SSL_USAGE_LIST_CMD
 # define SSL_USAGE_ARG_SHELL "Usage: command [command opts] [command args]\n"
@@ -52,7 +68,7 @@ typedef struct		s_ssl_in {
 	struct s_ssl_in	*next;
 }					t_ssl_in;
 
-struct				s_ssl;
+struct s_ssl;
 
 typedef int8_t		(t_fn_flag)(struct s_ssl *ssl, void *data);
 typedef int8_t		(t_fn_crypt)(struct s_ssl *ssl);
@@ -75,10 +91,10 @@ typedef struct		s_ssl {
 	char			**res;
 	int8_t			verbose;
 	char			**args;
-	t_ssl_flag			flags_all[SSL_FLAG_NB];
-	t_ssl_crypt			crypts[SSL_CRYPT_NB];
-	t_ssl_crypt			*crypt;
-	t_ssl_in			*inputs;
+	t_ssl_flag		flags_all[SSL_FLAG_NB];
+	t_ssl_crypt		crypts[SSL_CRYPT_NB];
+	t_ssl_crypt		*crypt;
+	t_ssl_in		*inputs;
 	uint8_t			inputs_nb;
 	uint8_t			cur_arg;
 	char			*error;
@@ -99,7 +115,8 @@ void				print_error_and_reset(t_ssl *ssl);
 
 int8_t				fn_arg_s(t_ssl *ssl, void *data);
 
-t_ssl_in			*create_input(char *data, char *filename, size_t len, int8_t is_stdin);
+t_ssl_in			*create_input(char *data, char *filename, size_t len,
+	int8_t is_stdin);
 void				add_input(t_ssl *ssl, t_ssl_in *new_input);
 void				add_input_first(t_ssl *ssl, t_ssl_in *new_input);
 void				free_inputs(t_ssl *ssl);
@@ -107,7 +124,8 @@ void				free_inputs(t_ssl *ssl);
 void				print_ssl_ins(t_ssl *ssl);
 void				print_bloc(uint8_t *bloc, size_t size);
 
-void				dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper);
+void				dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec,
+	int8_t flag_upper);
 void				free_array_str(char **res);
 int					ssl_open_file(t_ssl *ssl, t_ssl_in *input);
 
