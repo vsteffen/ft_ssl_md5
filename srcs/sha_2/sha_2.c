@@ -33,7 +33,7 @@ char		*sha_2_to_str(uint8_t *digest, t_sha_2 *sha_2)
 	return (ft_strdup(ret));
 }
 
-void		sha_2_print(t_ssl *ssl, t_input *input, char *digest_str)
+void		sha_2_print(t_ssl *ssl, t_ssl_in *input, char *digest_str)
 {
 	if (ssl->error)
 		print_error_and_reset(ssl);
@@ -121,7 +121,7 @@ void		sha_2_padding_length(uint8_t *bloc, size_t total_len, t_sha_2 *sha_2)
 	*(uint64_t *)(bloc + (sha_2->buff_size - 8)) = swap_uint64((uint64_t)total_len << 3);
 }
 
-int			sha_2_open_file(t_ssl *ssl, t_input *input)
+int			sha_2_open_file(t_ssl *ssl, t_ssl_in *input)
 {
 	int				fd;
 	struct stat		st;
@@ -148,7 +148,7 @@ int			sha_2_open_file(t_ssl *ssl, t_input *input)
 	return (fd);
 }
 
-int8_t		handle_sha_2_file(t_sha_2 *sha_2, t_input *input, uint64_t *digest, uint64_t *k)
+int8_t		handle_sha_2_file(t_sha_2 *sha_2, t_ssl_in *input, uint64_t *digest, uint64_t *k)
 {
 	int		fd;
 	uint8_t	buff[sha_2->buff_size];
@@ -193,7 +193,7 @@ int8_t		handle_sha_2_file(t_sha_2 *sha_2, t_input *input, uint64_t *digest, uint
 	return (1);
 }
 
-int8_t		handle_sha_2_raw(t_sha_2 *sha_2, t_input *input, uint64_t *digest, uint64_t *k)
+int8_t		handle_sha_2_raw(t_sha_2 *sha_2, t_ssl_in *input, uint64_t *digest, uint64_t *k)
 {
 	uint8_t	bloc_padded[sha_2->buff_size];
 	size_t	data_read;
@@ -318,7 +318,7 @@ void		sha_2_init_k(t_sha_2 *sha_2, uint64_t *k)
 int8_t		handle_sha_2(t_ssl *ssl)
 {
 	t_sha_2		sha_2;
-	t_input		*cur_input;
+	t_ssl_in		*cur_input;
 	uint64_t	digest[8];
 	uint64_t	k[80];
 	int8_t		ret;

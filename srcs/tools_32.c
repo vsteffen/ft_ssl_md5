@@ -1,31 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fn_flags.c                                         :+:      :+:    :+:   */
+/*   tools_32.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vsteffen <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/06/03 15:01:52 by vsteffen          #+#    #+#             */
-/*   Updated: 2019/06/03 15:02:02 by vsteffen         ###   ########.fr       */
+/*   Created: 2019/06/03 17:41:55 by vsteffen          #+#    #+#             */
+/*   Updated: 2019/06/03 17:41:56 by vsteffen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ssl_md5.h"
 
-int8_t	fn_arg_s(t_ssl *ssl, void *data)
+uint32_t	swap_uint32(uint32_t val)
 {
-	(void)data;
-	if (ssl->args[ssl->cur_arg + 1])
+	val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF);
+	return ((val << 16) | (val >> 16));
+}
+
+uint32_t	rot_r_32(uint32_t x, int8_t n)
+{
+	return (((x) >> (n)) | ((x) << (32 - (n))));
+}
+
+void		reverse_endian_array_32(uint32_t *array, size_t length)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < length)
 	{
-		ssl->cur_arg++;
-		add_input(ssl, create_input(ft_strdup(ssl->args[ssl->cur_arg])
-			, NULL, ft_strlen(ssl->args[ssl->cur_arg]), 0));
+		array[i] = swap_uint32(array[i]);
+		i++;
 	}
-	else
-	{
-		ssl->error = SSL_INVALID_FLAG;
-		ssl->error_more_1 = ssl->args[ssl->cur_arg];
-		return (0);
-	}
-	return (1);
 }

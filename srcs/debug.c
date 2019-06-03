@@ -12,10 +12,10 @@
 
 #include "ft_ssl_md5.h"
 
-void	print_inputs(t_ssl *ssl)
+void	print_ssl_ins(t_ssl *ssl)
 {
-	t_input			*tmp;
-	size_t			i;
+	t_ssl_in	*tmp;
+	size_t		i;
 
 	tmp = ssl->inputs;
 	i = 0;

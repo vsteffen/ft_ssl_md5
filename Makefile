@@ -44,8 +44,11 @@ MD5		=	/md5
 
 SRC =	main.c \
 		parsing.c \
+		parsing_2.c \
 		shell.c \
 		tools.c \
+		tools_32.c \
+		tools_64.c \
 		tools_inputs.c \
 		debug.c \
 		$(MD5)/md5.c \

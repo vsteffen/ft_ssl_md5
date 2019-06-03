@@ -74,7 +74,7 @@ int8_t	detect_and_handle_arg(t_ssl *ssl, char *arg, int8_t *must_be_file)
 	return (1);
 }
 
-t_crypt	*search_crypt(t_ssl *ssl, const char *name_given)
+t_ssl_crypt	*search_crypt(t_ssl *ssl, const char *name_given)
 {
 	int8_t		i;
 
@@ -83,35 +83,6 @@ t_crypt	*search_crypt(t_ssl *ssl, const char *name_given)
 		if (ft_strcmp(ssl->crypts[i].name, name_given) == 0)
 			return (&(ssl->crypts[i]));
 	return (NULL);
-}
-
-int8_t	get_inputs_in_stdin(t_ssl *ssl)
-{
-	char	*stdin_str;
-	char	*tmp;
-	char	buff[SSL_BUFF + 1];
-	size_t	ret_read;
-	size_t	len;
-
-	stdin_str = ft_strdup("");
-	len = 0;
-	while ((ret_read = read(0, buff, SSL_BUFF)) > 0)
-	{
-		buff[ret_read] = '\0';
-		tmp = (char *)malloc(sizeof(char) * (len + ret_read + 1));
-		ft_memcpy(tmp, stdin_str, len);
-		ft_memcpy(tmp + len, buff, ret_read + 1);
-		free(stdin_str);
-		stdin_str = tmp;
-		len += ret_read;
-	}
-	if (ret_read == (size_t)-1)
-	{
-		free(stdin_str);
-		return (0);
-	}
-	add_input_first(ssl, create_input(stdin_str, NULL, len, 1));
-	return (1);
 }
 
 int8_t	parse_args(t_ssl *ssl, char **args)
@@ -130,10 +101,10 @@ int8_t	parse_args(t_ssl *ssl, char **args)
 	while (args[ssl->cur_arg])
 	{
 		if (!detect_and_handle_arg(ssl, args[ssl->cur_arg], &must_be_file))
-			return(0);
+			return (0);
 		ssl->cur_arg++;
 	}
 	if (!ssl->inputs || ssl->flags_all[SSL_FLAG_P].enable)
-		return (get_inputs_in_stdin(ssl));
+		return (get_ssl_in_stdin(ssl));
 	return (1);
 }

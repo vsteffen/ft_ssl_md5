@@ -43,42 +43,42 @@
 # define SSL_INVALID_FILE_ISDIR "ft_ssl: %s: Is a directory\n"
 # define SSL_INVALID_SHELL "Invalid command '%s'; type \"help\" for a list.\n"
 
-typedef struct		s_input {
+typedef struct		s_ssl_in {
 	char			*data;
 	size_t			len;
 	char			*filename;
 	int				fd;
 	int8_t			is_stdin;
-	struct s_input	*next;
-}					t_input;
+	struct s_ssl_in	*next;
+}					t_ssl_in;
 
 struct				s_ssl;
 
 typedef int8_t		(t_fn_flag)(struct s_ssl *ssl, void *data);
 typedef int8_t		(t_fn_crypt)(struct s_ssl *ssl);
 
-typedef struct		s_flag {
+typedef struct		s_ssl_flag {
 	const char		*name;
 	int8_t			uniq;
 	int8_t			enable;
 	void			*data;
 	t_fn_flag		*func;
-}					t_flag;
+}					t_ssl_flag;
 
-typedef struct		s_crypt {
+typedef struct		s_ssl_crypt {
 	const char		*name;
 	t_fn_crypt		*func;
 	int8_t			flags[SSL_FLAG_MAX_PER_CRYPT];
-}					t_crypt;
+}					t_ssl_crypt;
 
 typedef struct		s_ssl {
 	char			**res;
 	int8_t			verbose;
 	char			**args;
-	t_flag			flags_all[SSL_FLAG_NB];
-	t_crypt			crypts[SSL_CRYPT_NB];
-	t_crypt			*crypt;
-	t_input			*inputs;
+	t_ssl_flag			flags_all[SSL_FLAG_NB];
+	t_ssl_crypt			crypts[SSL_CRYPT_NB];
+	t_ssl_crypt			*crypt;
+	t_ssl_in			*inputs;
 	uint8_t			inputs_nb;
 	uint8_t			cur_arg;
 	char			*error;
@@ -89,6 +89,7 @@ typedef struct		s_ssl {
 }					t_ssl;
 
 int8_t				parse_args(t_ssl *ssl, char **args);
+int8_t				get_ssl_in_stdin(t_ssl *ssl);
 
 int8_t				handle_shell(t_ssl *ssl);
 int8_t				shell_compare(const char *cmd, const char *input);
@@ -98,12 +99,12 @@ void				print_error_and_reset(t_ssl *ssl);
 
 int8_t				fn_arg_s(t_ssl *ssl, void *data);
 
-t_input				*create_input(char *data, char *filename, size_t len, int8_t is_stdin);
-void				add_input(t_ssl *ssl, t_input *new_input);
-void				add_input_first(t_ssl *ssl, t_input *new_input);
+t_ssl_in				*create_input(char *data, char *filename, size_t len, int8_t is_stdin);
+void				add_input(t_ssl *ssl, t_ssl_in *new_input);
+void				add_input_first(t_ssl *ssl, t_ssl_in *new_input);
 void				free_inputs(t_ssl *ssl);
 
-void				print_inputs(t_ssl *ssl);
+void				print_ssl_ins(t_ssl *ssl);
 void				print_bloc(uint8_t *bloc, size_t size);
 
 void				dtoa_hex_ptr(char *ptr, uintmax_t nb, size_t prec, int8_t flag_upper);

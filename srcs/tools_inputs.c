@@ -12,11 +12,12 @@
 
 #include "ft_ssl_md5.h"
 
-t_input		*create_input(char *data, char *filename, size_t len, int8_t is_stdin)
+t_ssl_in	*create_input(char *data, char *filename, size_t len,
+	int8_t is_stdin)
 {
-	t_input	*new;
+	t_ssl_in	*new;
 
-	new = (t_input *)malloc(sizeof(t_input));
+	new = (t_ssl_in *)malloc(sizeof(t_ssl_in));
 	if (!new)
 		return (NULL);
 	new->data = data;
@@ -28,9 +29,9 @@ t_input		*create_input(char *data, char *filename, size_t len, int8_t is_stdin)
 	return (new);
 }
 
-void	add_input(t_ssl *ssl, t_input *new_input)
+void		add_input(t_ssl *ssl, t_ssl_in *new_input)
 {
-	t_input		*tmp;
+	t_ssl_in		*tmp;
 
 	ssl->inputs_nb++;
 	tmp = ssl->inputs;
@@ -44,9 +45,9 @@ void	add_input(t_ssl *ssl, t_input *new_input)
 	tmp->next = new_input;
 }
 
-void	add_input_first(t_ssl *ssl, t_input *new_input)
+void		add_input_first(t_ssl *ssl, t_ssl_in *new_input)
 {
-	t_input		*tmp;
+	t_ssl_in		*tmp;
 
 	ssl->inputs_nb++;
 	tmp = ssl->inputs;
@@ -56,10 +57,10 @@ void	add_input_first(t_ssl *ssl, t_input *new_input)
 	new_input->next = tmp;
 }
 
-void	free_inputs(t_ssl *ssl)
+void		free_inputs(t_ssl *ssl)
 {
-	t_input		*cur;
-	t_input		*tmp;
+	t_ssl_in		*cur;
+	t_ssl_in		*tmp;
 
 	cur = ssl->inputs;
 	while (cur)
