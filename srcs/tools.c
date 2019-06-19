@@ -87,7 +87,7 @@ int			ssl_open_file(t_ssl *ssl, t_ssl_in *input)
 		ssl->error_more_1 = input->filename;
 		return (-1);
 	}
-	if ((fd = open(input->filename, O_RDWR)) == -1)
+	if ((fd = open(input->filename, O_RDONLY)) == -1)
 	{
 		ssl->error = SSL_INVALID_FILE_ERRNO;
 		ssl->error_more_1 = input->filename;
