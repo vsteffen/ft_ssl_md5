@@ -109,7 +109,6 @@ void		sha_2_init_struct(t_sha_2 *sha_2, t_ssl *ssl, t_ssl_in **cur_input,
 	int8_t *ret)
 {
 	sha_2->ssl = ssl;
-	sha_2_init_k(sha_2, sha_2->k);
 	ssl->error_no_usage = 1;
 	ssl->res = (char **)malloc(sizeof(char*) * (ssl->inputs_nb + 1));
 	*cur_input = ssl->inputs;
@@ -130,4 +129,5 @@ void		sha_2_init_struct(t_sha_2 *sha_2, t_ssl *ssl, t_ssl_in **cur_input,
 	}
 	else
 		sha_2_init_struct_64(sha_2, ssl);
+	sha_2_init_k(sha_2, sha_2->k);
 }
